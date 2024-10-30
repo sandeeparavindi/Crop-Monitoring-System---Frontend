@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
   });
 
 
-//navigation page
+// navigation page
   document.addEventListener("DOMContentLoaded", function () {
     const contentArea = document.getElementById("content-area");
     const fieldLink = document.querySelector('a[href="/pages/field.html"]');
@@ -60,4 +60,5 @@ document.addEventListener("DOMContentLoaded", function (event) {
       loadContent("/pages/vehical.html");
     });
   });
+
   
