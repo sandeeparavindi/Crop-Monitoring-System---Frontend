@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 //navigation page
   document.addEventListener("DOMContentLoaded", function () {
     const contentArea = document.getElementById("content-area");
-    const customerLink = document.querySelector('a[href="/pages/field.html"]');
+    const fieldLink = document.querySelector('a[href="/pages/field.html"]');
+    const vehicalLink = document.querySelector('a[href="/pages/vehical.html"]');
     
     function loadContent(url) {
       const xhr = new XMLHttpRequest();
@@ -49,9 +50,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
       xhr.send();
     }
   
-    customerLink.addEventListener("click", function (e) {
+    fieldLink.addEventListener("click", function (e) {
       e.preventDefault();
       loadContent("/pages/field.html");
+    });
+    vehicalLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      loadContent("/pages/vehical.html");
     });
   });
   
