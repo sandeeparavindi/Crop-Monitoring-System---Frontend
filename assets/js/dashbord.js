@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     linkColor.forEach((l) => l.addEventListener("click", colorLink));
   });
 
+
 //navigation page
   document.addEventListener("DOMContentLoaded", function () {
     const contentArea = document.getElementById("content-area");
