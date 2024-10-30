@@ -26,3 +26,32 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }
     linkColor.forEach((l) => l.addEventListener("click", colorLink));
   });
+
+//navigation page
+  document.addEventListener("DOMContentLoaded", function () {
+    const contentArea = document.getElementById("content-area");
+    const customerLink = document.querySelector('a[href="/pages/field.html"]');
+    
+    function loadContent(url) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          contentArea.innerHTML = xhr.responseText;
+          contentArea.scrollTop = 0;
+        } else {
+          contentArea.innerHTML = "<h4>Failed to load content.</h4>";
+        }
+      };
+      xhr.onerror = function () {
+        contentArea.innerHTML = "<h4>Error loading content.</h4>";
+      };
+      xhr.send();
+    }
+  
+    customerLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      loadContent("/pages/field.html");
+    });
+  });
+  
