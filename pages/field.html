@@ -13,8 +13,8 @@
   </head>
   <body>
     <div class="container mt-4">
-      <h2 class="text-center" style="margin-top: 90px;">Field Management</h2>
-      
+      <h2 class="text-center" style="margin-top: 90px">Field Management</h2>
+
       <!-- Form Section -->
       <form id="fieldForm" class="mb-4">
         <div class="row mb-3">
@@ -30,11 +30,20 @@
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label for="fieldLocation" class="form-label">Field Location (GPS Coordinates)</label>
-            <input type="text" class="form-control" id="fieldLocation" required />
+            <label for="fieldLocation" class="form-label"
+              >Field Location (GPS Coordinates)</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="fieldLocation"
+              required
+            />
           </div>
           <div class="col-md-6">
-            <label for="fieldSize" class="form-label">Field Size (Sq. meters)</label>
+            <label for="fieldSize" class="form-label"
+              >Field Size (Sq. meters)</label
+            >
             <input type="number" class="form-control" id="fieldSize" required />
           </div>
         </div>
@@ -42,34 +51,136 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="crops" class="form-label">Crops</label>
-            <input type="text" class="form-control" id="crops" placeholder="Enter crop types separated by commas" required />
+            <input
+              type="text"
+              class="form-control"
+              id="crops"
+              placeholder="Enter crop types separated by commas"
+              required
+            />
           </div>
           <div class="col-md-6">
             <label for="staff" class="form-label">Allocated Staff</label>
-            <input type="text" class="form-control" id="staff" placeholder="Enter staff names separated by commas" required />
+            <input
+              type="text"
+              class="form-control"
+              id="staff"
+              placeholder="Enter staff names separated by commas"
+              required
+            />
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="fieldImage1" class="form-label">Field Image 1</label>
-            <input type="file" class="form-control" id="fieldImage1" accept="image/*" />
+            <input
+              type="file"
+              class="form-control"
+              id="fieldImage1"
+              accept="image/*"
+            />
           </div>
           <div class="col-md-6">
             <label for="fieldImage2" class="form-label">Field Image 2</label>
-            <input type="file" class="form-control" id="fieldImage2" accept="image/*" />
+            <input
+              type="file"
+              class="form-control"
+              id="fieldImage2"
+              accept="image/*"
+            />
           </div>
         </div>
 
         <div class="d-flex justify-content-between">
-          <button type="submit" class="btn btn-success" id="saveBtn">Save</button>
-          <button type="button" class="btn btn-primary" id="updateBtn">Update</button>
-          <button type="button" class="btn btn-warning" id="clearBtn">Clear</button>
-          <button type="button" class="btn btn-danger" id="deleteBtn">Delete</button>
-          <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#fieldListModal" id="getAllBtn">Get All Fields</button>
+          <button type="submit" class="btn btn-success" id="saveBtn">
+            Save
+          </button>
+          <button type="button" class="btn btn-primary" id="updateBtn">
+            Update
+          </button>
+          <button type="button" class="btn btn-warning" id="clearBtn">
+            Clear
+          </button>
+          <button type="button" class="btn btn-danger" id="deleteBtn">
+            Delete
+          </button>
+          <button
+            type="button"
+            class="btn btn-info"
+            data-bs-toggle="modal"
+            data-bs-target="#fieldListModal"
+            id="getAllBtn"
+          >
+            Get All Fields
+          </button>
         </div>
       </form>
 
+      <!-- Search-->
+      <div class="mb-3">
+        <input
+          type="text"
+          id="searchField"
+          class="form-control"
+          placeholder="Search by Field Code"
+        />
+        <button type="button" class="btn btn-secondary mt-2" id="searchBtn">
+          Search
+        </button>
+      </div>
+
+      <!-- Field List-->
+      <div
+        class="modal fade"
+        id="fieldListModal"
+        tabindex="-1"
+        aria-labelledby="fieldListModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="fieldListModalLabel">All Fields</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <!-- Field List Table inside the modal -->
+              <div id="fieldList">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Field Code</th>
+                      <th>Field Name</th>
+                      <th>Location</th>
+                      <th>Size</th>
+                      <th>Crops</th>
+                      <th>Staff</th>
+                      <th>Image 1</th>
+                      <th>Image 2</th>
+                    </tr>
+                  </thead>
+                  <tbody id="fieldTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script
