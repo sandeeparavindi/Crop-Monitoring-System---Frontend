@@ -61,12 +61,40 @@ document.addEventListener("DOMContentLoaded", function () {
     xhr.send();
   }
 
+  function loadContentVehical(url) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        contentArea.innerHTML = xhr.responseText;
+        contentArea.scrollTop = 0;
+
+        if (!document.querySelector('script[src="/assets/js/vehical.js"]')) {
+          const vehicalScript = document.createElement("script");
+          vehicalScript.src = "/assets/js/vehical.js";
+          vehicalScript.onload = function () {
+            if (typeof setVehicalCode === "function") setVehicalCode();
+          };
+          document.body.appendChild(vehicalScript);
+        } else {
+          if (typeof setVehicleCode === "function") setVehicleCode();
+        }
+      } else {
+        contentArea.innerHTML = "<h4>Failed to load content.</h4>";
+      }
+    };
+    xhr.onerror = function () {
+      contentArea.innerHTML = "<h4>Error loading content.</h4>";
+    };
+    xhr.send();
+  }
+
   fieldLink.addEventListener("click", function (e) {
     e.preventDefault();
     loadContent("/pages/field.html");
   });
   vehicalLink.addEventListener("click", function (e) {
     e.preventDefault();
-    loadContent("/pages/vehical.html");
+    loadContentVehical("/pages/vehical.html");
   });
 });
