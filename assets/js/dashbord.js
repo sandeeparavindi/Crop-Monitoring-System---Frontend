@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
       reader.onload = function (e) {
         const preview = document.getElementById(previewElementId);
         preview.src = e.target.result;
-        preview.style.display = "block"; // Show the preview
+        preview.style.display = "block";
       };
       reader.readAsDataURL(file);
     }
