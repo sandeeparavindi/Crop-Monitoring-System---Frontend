@@ -33,15 +33,15 @@ function generateCropCode() {
   
   // Get all crops
   document.getElementById("getAllBtn").addEventListener("click", function () {
-    const cropTableBody = document.getElementById("cropTableBody");
-    cropTableBody.innerHTML = `
-      <tr>
-        <td>C-1001</td><td>Rice</td><td>Oryza sativa</td><td>Cereal</td><td>Kharif</td><td>Staff 1</td><td>Requires ample water</td>
-      </tr>
-      <tr>
-        <td>C-1002</td><td>Cowpea</td><td>Vigna unguiculata</td><td>Legume</td><td>Rabi</td><td>Staff 2</td><td>N/A</td>
-      </tr>
-    `;
+    // const cropTableBody = document.getElementById("cropTableBody");
+    // cropTableBody.innerHTML = `
+    //   <tr>
+    //     <td>C-1001</td><td>Rice</td><td>Oryza sativa</td><td>Cereal</td><td>Kharif</td><td>Staff 1</td><td>Requires ample water</td>
+    //   </tr>
+    //   <tr>
+    //     <td>C-1002</td><td>Cowpea</td><td>Vigna unguiculata</td><td>Legume</td><td>Rabi</td><td>Staff 2</td><td>N/A</td>
+    //   </tr>
+    // `;
   });
   
   document.getElementById("searchBtn").addEventListener("click", function () {

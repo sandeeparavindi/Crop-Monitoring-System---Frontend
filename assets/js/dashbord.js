@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const fieldLink = document.querySelector('a[href="/pages/field.html"]');
   const vehicalLink = document.querySelector('a[href="/pages/vehical.html"]');
   const cropLink = document.querySelector('a[href="/pages/crop.html"]');
+  const equipmentLink = document.querySelector('a[href="/pages/equipment.html"]');
 
   function loadContent(url, scriptSrc, callback) {
     const xhr = new XMLHttpRequest();
@@ -81,4 +82,16 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     loadContent("/pages/crop.html", "/assets/js/crop.js", setCropCode);
   });
+
+  equipmentLink.addEventListener("click", function (e) {
+    e.preventDefault();
+    loadContent("/pages/equipment.html", "/assets/js/equipment.js", () => {
+      if (typeof setEquipmentId === "function") {
+        setEquipmentId();
+      } else {
+        console.error("setEquipmentId is not defined");
+      }
+    });
+  });
+  
 });
