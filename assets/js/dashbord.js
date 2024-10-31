@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const fieldLink = document.querySelector('a[href="/pages/field.html"]');
   const vehicalLink = document.querySelector('a[href="/pages/vehical.html"]');
   const cropLink = document.querySelector('a[href="/pages/crop.html"]');
+  const staffLink = document.querySelector('a[href="/pages/staff.html"]');
   const equipmentLink = document.querySelector(
     'a[href="/pages/equipment.html"]'
   );
@@ -87,6 +88,21 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     loadContent("/pages/crop.html", "/assets/js/crop.js", setCropCode);
   });
+
+  staffLink.addEventListener("click", function (e) {
+    e.preventDefault();
+    loadContent("/pages/staff.html", "/assets/js/staff.js", () => {
+      if (typeof setStaffCode === "function") {
+        setStaffCode();
+      }
+      if (typeof setStaffId === "function") {
+        setStaffId();
+      } else {
+        console.error("setStaffId is not defined");
+      }
+    });
+  });
+  
 
   equipmentLink.addEventListener("click", function (e) {
     e.preventDefault();
