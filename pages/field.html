@@ -39,6 +39,7 @@
               id="fieldLocation"
               required
             />
+            
           </div>
           <div class="col-md-6">
             <label for="fieldSize" class="form-label"
@@ -51,23 +52,15 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="crops" class="form-label">Crops</label>
-            <input
-              type="text"
-              class="form-control"
-              id="crops"
-              placeholder="Enter crop types separated by commas"
-              required
-            />
+            <select class="form-select" id="crops">
+              <option value="" disabled selected>Select Crop</option>
+            </select>
           </div>
           <div class="col-md-6">
             <label for="staff" class="form-label">Allocated Staff</label>
-            <input
-              type="text"
-              class="form-control"
-              id="staff"
-              placeholder="Enter staff names separated by commas"
-              required
-            />
+            <select class="form-select" id="staff">
+              <option value="" disabled selected>Select Staff</option>
+            </select>
           </div>
         </div>
 
