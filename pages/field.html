@@ -39,7 +39,6 @@
               id="fieldLocation"
               required
             />
-            
           </div>
           <div class="col-md-6">
             <label for="fieldSize" class="form-label"
@@ -52,18 +51,19 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="crops" class="form-label">Crops</label>
-            <select class="form-select" id="crops">
+            <select class="form-select" id="crops" required>
               <option value="" disabled selected>Select Crop</option>
+              <option value="no">Not Allocated</option>
             </select>
           </div>
           <div class="col-md-6">
             <label for="staff" class="form-label">Allocated Staff</label>
-            <select class="form-select" id="staff">
+            <select class="form-select" id="staff" required>
               <option value="" disabled selected>Select Staff</option>
+              <option value="no">Not Allocated</option>
             </select>
           </div>
         </div>
-
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="fieldImage1" class="form-label">Field Image 1</label>
@@ -73,6 +73,14 @@
               id="fieldImage1"
               accept="image/*"
             />
+            <!-- Preview Image 1 -->
+            <img
+              id="previewImage1"
+              src="#"
+              alt="Image 1 Preview"
+              class="img-fluid mt-2"
+              style="display: none; max-height: 200px"
+            />
           </div>
           <div class="col-md-6">
             <label for="fieldImage2" class="form-label">Field Image 2</label>
@@ -81,6 +89,14 @@
               class="form-control"
               id="fieldImage2"
               accept="image/*"
+            />
+            <!-- Preview Image 2 -->
+            <img
+              id="previewImage2"
+              src="#"
+              alt="Image 2 Preview"
+              class="img-fluid mt-2"
+              style="display: none; max-height: 200px"
             />
           </div>
         </div>

@@ -33,7 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const fieldLink = document.querySelector('a[href="/pages/field.html"]');
   const vehicalLink = document.querySelector('a[href="/pages/vehical.html"]');
   const cropLink = document.querySelector('a[href="/pages/crop.html"]');
-  const equipmentLink = document.querySelector('a[href="/pages/equipment.html"]');
+  const equipmentLink = document.querySelector(
+    'a[href="/pages/equipment.html"]'
+  );
 
   function loadContent(url, scriptSrc, callback) {
     const xhr = new XMLHttpRequest();
@@ -66,7 +68,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   fieldLink.addEventListener("click", function (e) {
     e.preventDefault();
-    loadContent("/pages/field.html", "/assets/js/field.js", setFieldCode);
+    loadContent("/pages/field.html", "/assets/js/field.js", () => {
+      setFieldCode();
+      attachFilePreviewEvents();
+    });
   });
 
   vehicalLink.addEventListener("click", function (e) {
@@ -93,5 +98,31 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
-  
+
+  function attachFilePreviewEvents() {
+    document
+      .getElementById("fieldImage1")
+      .addEventListener("change", function () {
+        previewImage(this, "previewImage1");
+      });
+
+    document
+      .getElementById("fieldImage2")
+      .addEventListener("change", function () {
+        previewImage(this, "previewImage2");
+      });
+  }
+
+  function previewImage(input, previewElementId) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const preview = document.getElementById(previewElementId);
+        preview.src = e.target.result;
+        preview.style.display = "block"; // Show the preview
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 });
