@@ -32,8 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const contentArea = document.getElementById("content-area");
   const fieldLink = document.querySelector('a[href="/pages/field.html"]');
   const vehicalLink = document.querySelector('a[href="/pages/vehical.html"]');
+  const cropLink = document.querySelector('a[href="/pages/crop.html"]');
 
-  function loadContent(url) {
+  function loadContent(url, scriptSrc, callback) {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onload = function () {
@@ -41,43 +42,16 @@ document.addEventListener("DOMContentLoaded", function () {
         contentArea.innerHTML = xhr.responseText;
         contentArea.scrollTop = 0;
 
-        if (!document.querySelector('script[src="/assets/js/field.js"]')) {
-          const fieldScript = document.createElement("script");
-          fieldScript.src = "/assets/js/field.js";
-          fieldScript.onload = function () {
-            if (typeof setFieldCode === "function") setFieldCode();
+        // Check if the script is already loaded
+        if (!document.querySelector(`script[src="${scriptSrc}"]`)) {
+          const script = document.createElement("script");
+          script.src = scriptSrc;
+          script.onload = function () {
+            if (typeof callback === "function") callback();
           };
-          document.body.appendChild(fieldScript);
+          document.body.appendChild(script);
         } else {
-          if (typeof setFieldCode === "function") setFieldCode();
-        }
-      } else {
-        contentArea.innerHTML = "<h4>Failed to load content.</h4>";
-      }
-    };
-    xhr.onerror = function () {
-      contentArea.innerHTML = "<h4>Error loading content.</h4>";
-    };
-    xhr.send();
-  }
-
-  function loadContentVehical(url) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        contentArea.innerHTML = xhr.responseText;
-        contentArea.scrollTop = 0;
-
-        if (!document.querySelector('script[src="/assets/js/vehical.js"]')) {
-          const vehicalScript = document.createElement("script");
-          vehicalScript.src = "/assets/js/vehical.js";
-          vehicalScript.onload = function () {
-            if (typeof setVehicalCode === "function") setVehicalCode();
-          };
-          document.body.appendChild(vehicalScript);
-        } else {
-          if (typeof setVehicleCode === "function") setVehicleCode();
+          if (typeof callback === "function") callback();
         }
       } else {
         contentArea.innerHTML = "<h4>Failed to load content.</h4>";
@@ -91,10 +65,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   fieldLink.addEventListener("click", function (e) {
     e.preventDefault();
-    loadContent("/pages/field.html");
+    loadContent("/pages/field.html", "/assets/js/field.js", setFieldCode);
   });
+
   vehicalLink.addEventListener("click", function (e) {
     e.preventDefault();
-    loadContentVehical("/pages/vehical.html");
+    loadContent("/pages/vehical.html", "/assets/js/vehical.js", () => {
+      if (typeof setVehicleCode === "function") {
+        setVehicleCode();
+      }
+    });
+  });
+
+  cropLink.addEventListener("click", function (e) {
+    e.preventDefault();
+    loadContent("/pages/crop.html", "/assets/js/crop.js", setCropCode);
   });
 });
