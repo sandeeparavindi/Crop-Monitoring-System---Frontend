@@ -10,10 +10,38 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/dashboard.css">
   </head>
-  <body>
+  <style>
+    .select2-container--default .select2-selection--multiple {
+        background-color: #f8f9fa; 
+        border: 1px solid #ced4da; 
+        border-radius: 4px; 
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #007bff;
+        color: white; 
+        border: 1px solid #007bff; 
+        border-radius: 2px; 
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: white; 
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+        color: #ff0000;
+    }
+</style>
+  <body id="body-pd" class="bg-light">
+    <div id="sidebar-container"></div>
     <div class="container mt-4">
-      <h2 class="text-center" style="margin-top: 70px">Field Management</h2>
+      <h2 class="text-center" style="margin-top: 140px">Field Management</h2>
 
       <!-- Form Section -->
       <form id="fieldForm" class="mb-4">
@@ -49,13 +77,18 @@
         </div>
 
         <div class="row mb-3">
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <label for="crops" class="form-label">Crops</label>
             <select class="form-select" id="crops" required>
               <option value="" disabled selected>Select Crop</option>
               <option value="no">Not Allocated</option>
             </select>
-          </div>
+          </div> -->
+          <div class="col-md-6">
+            <label for="crops" class="form-label">Crops</label>
+            <select class="form-select" id="crops" multiple required></select>
+        </div>
+
           <div class="col-md-6">
             <label for="staff" class="form-label">Allocated Staff</label>
             <select class="form-select" id="staff" required>
@@ -196,6 +229,31 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="/assets/js/sidebarControl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="/assets/js/field.js"></script>
+    <script>
+      $(document).ready(function() {
+          $('#crops').select2({
+              placeholder: "Select Crops",
+              allowClear: true
+          });
+
+          const cropOptions = [
+              { id: 'no', text: 'Not Allocated' },
+              { id: 'wheat', text: 'Wheat' },
+              { id: 'rice', text: 'Rice' },
+              { id: 'corn', text: 'Corn' },
+              // Add more crop options as needed
+          ];
+
+          cropOptions.forEach(function(option) {
+              let newOption = new Option(option.text, option.id, false, false);
+              $('#crops').append(newOption).trigger('change');
+          });
+      });
+  </script>
+  
   </body>
 </html>
