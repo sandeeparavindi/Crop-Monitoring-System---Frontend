@@ -10,9 +10,44 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    <style>
+     .loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+    </style>
   </head>
   <body id="body-pd" class="bg-light">
+    <div id="page-loader" class="loader-wrapper">
+      <div class="loader"></div>
+    </div>
     <div id="sidebar-container"></div>
     <div class="container mt-4">
       <h2 class="text-center" style="margin-top: 100px">Crop Management</h2>
@@ -143,57 +178,6 @@
           Search
         </button>
       </div>
-
-      <!-- Crop List Modal -->
-      <div
-        class="modal fade"
-        id="cropListModal"
-        tabindex="-1"
-        aria-labelledby="cropListModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="cropListModalLabel">All Crops</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <!-- Crop List Table -->
-              <div id="cropList">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Crop Code</th>
-                      <th>Common Name</th>
-                      <th>Scientific Name</th>
-                      <th>Category</th>
-                      <th>Season</th>
-                      <th>Staff Member</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody id="cropTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <script
@@ -203,5 +187,15 @@
     ></script>
     <script src="/assets/js/crop.js"></script>
     <script src="/assets/js/sidebarControl.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const loader = document.getElementById("page-loader");
+        const mainContent = document.getElementById("main-content");
+        setTimeout(() => {
+          loader.style.display = "none";
+          mainContent.style.display = "block";
+        }, 1000);
+      });
+    </script>
   </body>
 </html>

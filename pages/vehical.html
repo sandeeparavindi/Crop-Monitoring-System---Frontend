@@ -10,8 +10,8 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="/assets/css/dashboard.css" />
   </head>
-  <link rel="stylesheet" href="/assets/css/dashboard.css">
 
   <body id="body-pd" class="bg-light">
     <div id="sidebar-container"></div>
@@ -135,59 +135,6 @@
         <button type="button" class="btn btn-secondary mt-2" id="searchBtn">
           Search
         </button>
-      </div>
-
-      <!-- Vehicle List Modal -->
-      <div
-        class="modal fade"
-        id="vehicleListModal"
-        tabindex="-1"
-        aria-labelledby="vehicleListModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="vehicleListModalLabel">
-                All Vehicles
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <!-- Vehicle List Table -->
-              <div id="vehicleList">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Vehicle Code</th>
-                      <th>License Plate</th>
-                      <th>Category</th>
-                      <th>Fuel Type</th>
-                      <th>Status</th>
-                      <th>Staff Member</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody id="vehicleTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 

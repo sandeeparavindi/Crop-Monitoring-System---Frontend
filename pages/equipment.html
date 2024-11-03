@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="/assets/css/dashboard.css">
   </head>
   <body id="body-pd" class="bg-light">
+     <!-- Page Loader -->
+  <div id="page-loader" class="loader-wrapper">
+    <div class="loader"></div>
+  </div>
     <div id="sidebar-container"></div>
     <div class="container mt-4">
       <h2 class="text-center" style="margin-top: 100px">Equipment Management</h2>
@@ -105,57 +109,6 @@
         <button type="button" class="btn btn-secondary mt-2" id="searchBtn">
           Search
         </button>
-      </div>
-
-      <!-- Equipment List Modal -->
-      <div
-        class="modal fade"
-        id="equipmentListModal"
-        tabindex="-1"
-        aria-labelledby="equipmentListModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="equipmentListModalLabel">
-                All Equipment
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <div id="equipmentList">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Equipment ID</th>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Status</th>
-                      <th>Assigned Staff</th>
-                      <th>Assigned Field</th>
-                    </tr>
-                  </thead>
-                  <tbody id="equipmentTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
