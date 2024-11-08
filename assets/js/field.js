@@ -157,10 +157,12 @@ $(document).ready(function () {
 //clear
   $("#clearBtn").click(function () {
     $("#fieldForm")[0].reset();
+    $("#searchField").val(''); 
     setFieldCode();
   });
 });
 
+//delete
 $("#deleteBtn").click(function (e) {
   e.preventDefault();
 
