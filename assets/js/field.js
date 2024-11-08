@@ -192,24 +192,45 @@ $("#updateBtn").click(function (e) {
 
   const formData = new FormData();
   formData.append("fieldCode", $("#fieldCode").val());
-  formData.append("fieldName", $("#fieldName").val());
-  formData.append("fieldLocation", $("#fieldLocation").val());
-  formData.append("extentSize", $("#fieldSize").val());
-  formData.append("fieldImage1", $("#fieldImage1")[0].files[0]);
-  formData.append("fieldImage2", $("#fieldImage2")[0].files[0]);
+
+  const fieldName = $("#fieldName").val();
+  if (fieldName) {
+      formData.append("fieldName", fieldName);
+  }
+
+  const fieldLocation = $("#fieldLocation").val();
+  if (fieldLocation) {
+      formData.append("fieldLocation", fieldLocation);
+  }
+
+  const extentSize = $("#fieldSize").val();
+  if (extentSize) {
+      formData.append("extentSize", extentSize);
+  }
+
+  const fieldImage1 = $("#fieldImage1")[0].files[0];
+  if (fieldImage1) {
+      formData.append("fieldImage1", fieldImage1);
+  }
+
+  const fieldImage2 = $("#fieldImage2")[0].files[0];
+  if (fieldImage2) {
+      formData.append("fieldImage2", fieldImage2);
+  }
 
   $.ajax({
-    url: `http://localhost:5050/cropMonitoring/api/v1/fields/${$("#fieldCode").val()}`,
-    type: "PATCH",
-    data: formData,
-    processData: false,
-    contentType: false,
-    success: function () {
-      alert("Field updated successfully");
-    },
-    error: function (xhr) {
-      console.error("Error:", xhr.responseText);
-      alert("Failed to update field: " + (xhr.responseText || "Unknown error occurred"));
-    },
+      url: `http://localhost:5050/cropMonitoring/api/v1/fields/${$("#fieldCode").val()}`,
+      type: "PATCH",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function () {
+          alert("Field updated successfully");
+      },
+      error: function (xhr) {
+          console.error("Error:", xhr.responseText);
+          alert("Failed to update field: " + (xhr.responseText || "Unknown error occurred"));
+      },
   });
 });
+
