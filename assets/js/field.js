@@ -236,3 +236,11 @@ $("#updateBtn").click(function (e) {
   });
 });
 
+//getall
+$(document).ready(function () {
+  $('#getAllBtn').click(function () {
+    window.location.href = 'field-list.html'; 
+  });
+});
+
+
