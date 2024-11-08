@@ -32,6 +32,31 @@ document.getElementById("fieldImage2").addEventListener("change", function () {
   previewImage(this, "previewImage2");
 });
 
+//clear 
+$("#clearBtn").click(function (e) {
+  e.preventDefault();
+
+  $("#fieldCode").val('');
+  $("#fieldName").val('');
+  $("#fieldLocation").val('');
+  $("#fieldSize").val('');
+
+  $("#crops").val(null).trigger('change');
+  $("#staff").val(''); 
+
+  const previewImage1 = document.getElementById("previewImage1");
+  const previewImage2 = document.getElementById("previewImage2");
+
+  previewImage1.src = ''; 
+  previewImage1.style.display = 'none'; 
+
+  previewImage2.src = '';  
+  previewImage2.style.display = 'none'; 
+
+  alert("Form cleared successfully!");
+});
+
+//search
 $("#searchBtn").click(function (e) {
   e.preventDefault();
 
@@ -50,6 +75,22 @@ $("#searchBtn").click(function (e) {
       $("#fieldName").val(response.fieldName);
       $("#fieldLocation").val(response.fieldLocation);
       $("#fieldSize").val(response.extentSize);
+
+      $("#crops").val(response.crops).trigger('change'); 
+      $("#staff").val(response.staff); 
+
+      if (response.fieldImage1) {
+        const previewImage1 = document.getElementById("previewImage1");
+        previewImage1.src = "data:image/jpeg;base64," + response.fieldImage1;
+        previewImage1.style.display = "block";
+      }
+
+      if (response.fieldImage2) {
+        const previewImage2 = document.getElementById("previewImage2");
+        previewImage2.src = "data:image/jpeg;base64," + response.fieldImage2;
+        previewImage2.style.display = "block";
+      }
+
       alert("Field found and loaded into the form");
     },
     error: function (xhr) {
@@ -59,7 +100,7 @@ $("#searchBtn").click(function (e) {
   });
 });
 
-
+//crop list
 $(document).ready(function () {
   $("#crops").select2({
     placeholder: "Select Crops",
@@ -78,6 +119,7 @@ $(document).ready(function () {
     $("#crops").append(newOption).trigger("change");
   });
 
+//save
   $(document).ready(function () {
     $("#saveBtn").click(function (e) {
       e.preventDefault();
@@ -112,6 +154,7 @@ $(document).ready(function () {
     });
   });
 
+//clear
   $("#clearBtn").click(function () {
     $("#fieldForm")[0].reset();
     setFieldCode();
@@ -143,6 +186,7 @@ $("#deleteBtn").click(function (e) {
   });
 });
 
+//update
 $("#updateBtn").click(function (e) {
   e.preventDefault();
 
