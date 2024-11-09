@@ -16,14 +16,25 @@
     />
     <link rel="stylesheet" href="/assets/css/loader.css" />
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    <style>
+      .table-container {
+        margin-top: 100px;
+        padding-top: 20px;
+      }
+      .back-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+    </style>
   </head>
   <body id="body-pd" class="bg-light">
     <div id="page-loader" class="loader-wrapper">
       <div class="loader"></div>
     </div>
     <div id="sidebar-container"></div>
-    <div class="container mt-4">
-      <h2 class="text-center" style="margin-top: 100px">All Field Details</h2>
+    <div class="container table-container">
+      <h2 class="text-center">All Field Details</h2>
       <div class="table-responsive mt-4">
         <table class="table table-hover table-striped align-middle">
           <thead class="table-dark">
@@ -35,12 +46,13 @@
               <th scope="col">Field Size</th>
               <th scope="col">Crops</th>
               <th scope="col">Staff</th>
+              <th scope="col">Images</th>
             </tr>
           </thead>
           <tbody id="cropDetailsTable"></tbody>
         </table>
       </div>
-      <div class="d-flex justify-content-center mt-4">
+      <div class="back-btn-container">
         <button class="btn btn-primary" id="backBtn">Back to Field</button>
       </div>
     </div>
