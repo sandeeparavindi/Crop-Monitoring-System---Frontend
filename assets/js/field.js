@@ -57,46 +57,59 @@ $("#clearBtn").click(function (e) {
 });
 
 //search
-$("#searchBtn").click(function (e) {
-  e.preventDefault();
+$(document).ready(function () {
+  // Function to handle the search functionality
+  function performSearch() {
+    const fieldCode = $("#searchField").val();
 
-  const fieldCode = $("#searchField").val();
+    if (!fieldCode) {
+      alert("Please enter a Field Code to search.");
+      return;
+    }
 
-  if (!fieldCode) {
-    alert("Please enter a Field Code to search.");
-    return;
+    $.ajax({
+      url: `http://localhost:5050/cropMonitoring/api/v1/fields/${fieldCode}`,
+      type: "GET",
+      success: function (response) {
+        $("#fieldCode").val(response.fieldCode);
+        $("#fieldName").val(response.fieldName);
+        $("#fieldLocation").val(response.fieldLocation);
+        $("#fieldSize").val(response.extentSize);
+
+        $("#crops").val(response.crops).trigger('change');
+        $("#staff").val(response.staff);
+
+        if (response.fieldImage1) {
+          const previewImage1 = document.getElementById("previewImage1");
+          previewImage1.src = "data:image/jpeg;base64," + response.fieldImage1;
+          previewImage1.style.display = "block";
+        }
+
+        if (response.fieldImage2) {
+          const previewImage2 = document.getElementById("previewImage2");
+          previewImage2.src = "data:image/jpeg;base64," + response.fieldImage2;
+          previewImage2.style.display = "block";
+        }
+
+        alert("Field found and loaded into the form");
+      },
+      error: function (xhr) {
+        console.error("Error:", xhr.responseText);
+        alert("Failed to find field: " + (xhr.responseText || "Unknown error occurred"));
+      },
+    });
   }
 
-  $.ajax({
-    url: `http://localhost:5050/cropMonitoring/api/v1/fields/${fieldCode}`,
-    type: "GET",
-    success: function (response) {
-      $("#fieldCode").val(response.fieldCode);
-      $("#fieldName").val(response.fieldName);
-      $("#fieldLocation").val(response.fieldLocation);
-      $("#fieldSize").val(response.extentSize);
+  $("#searchBtn").click(function (e) {
+    e.preventDefault();
+    performSearch();
+  });
 
-      $("#crops").val(response.crops).trigger('change'); 
-      $("#staff").val(response.staff); 
-
-      if (response.fieldImage1) {
-        const previewImage1 = document.getElementById("previewImage1");
-        previewImage1.src = "data:image/jpeg;base64," + response.fieldImage1;
-        previewImage1.style.display = "block";
-      }
-
-      if (response.fieldImage2) {
-        const previewImage2 = document.getElementById("previewImage2");
-        previewImage2.src = "data:image/jpeg;base64," + response.fieldImage2;
-        previewImage2.style.display = "block";
-      }
-
-      alert("Field found and loaded into the form");
-    },
-    error: function (xhr) {
-      console.error("Error:", xhr.responseText);
-      alert("Failed to find field: " + (xhr.responseText || "Unknown error occurred"));
-    },
+  $("#searchField").on("keypress", function (e) {
+    if (e.which === 13) { 
+      e.preventDefault();
+      performSearch();
+    }
   });
 });
 
