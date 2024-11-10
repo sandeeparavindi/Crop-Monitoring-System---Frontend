@@ -142,5 +142,33 @@ document.getElementById('deleteBtn').addEventListener('click', function (e) {
   .catch(error => console.error('Error:', error));
 });
 
+//update
+document.getElementById('updateBtn').addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const cropCode = document.getElementById('cropCode').value;
+  const formData = new FormData();
+
+  formData.append('cropCommonName', document.getElementById('cropCommonName').value);
+  formData.append('cropScientificName', document.getElementById('cropScientificName').value);
+  formData.append('category', document.getElementById('cropCategory').value);
+  formData.append('cropSeason', document.getElementById('cropSeason').value);
+  formData.append('cropImage', document.getElementById('cropImage').files[0]);
+  formData.append('fieldCode', document.getElementById('field').value);
+
+  fetch(`http://localhost:5050/cropMonitoring/api/v1/crops/${cropCode}`, {
+    method: 'PATCH',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      alert('Crop updated successfully!');
+      clearForm();
+    } else {
+      alert('Failed to update the crop.');
+    }
+  })
+  .catch(error => console.error('Error:', error));
+});
 
 
