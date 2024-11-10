@@ -33,142 +33,167 @@ function previewCropImage() {
   }
 }
 
+//load all fields for combo-box
 function loadFields() {
-  fetch('http://localhost:5050/cropMonitoring/api/v1/fields/allFields')
-    .then(response => response.json())
-    .then(data => {
-      const fieldSelect = document.getElementById('field');
-      fieldSelect.innerHTML = '<option value="" disabled selected>Select Field</option>';
+  fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields")
+    .then((response) => response.json())
+    .then((data) => {
+      const fieldSelect = document.getElementById("field");
+      fieldSelect.innerHTML =
+        '<option value="" disabled selected>Select Field</option>';
 
-      data.forEach(field => {
-        const option = document.createElement('option');
-        option.value = field.fieldCode; 
+      data.forEach((field) => {
+        const option = document.createElement("option");
+        option.value = field.fieldCode;
         option.text = `${field.fieldCode} - ${field.fieldName}`;
         fieldSelect.appendChild(option);
       });
     })
-    .catch(error => console.error('Error loading fields:', error));
+    .catch((error) => console.error("Error loading fields:", error));
 }
 
-document.getElementById('saveBtn').addEventListener('click', function (e) {
-  e.preventDefault(); 
+//save
+document.getElementById("saveBtn").addEventListener("click", function (e) {
+  e.preventDefault();
 
   const formData = new FormData();
-  formData.append('cropCode', document.getElementById('cropCode').value);
-  formData.append('cropCommonName', document.getElementById('cropCommonName').value);
-  formData.append('cropScientificName', document.getElementById('cropScientificName').value);
-  formData.append('category', document.getElementById('cropCategory').value);
-  formData.append('cropSeason', document.getElementById('cropSeason').value);
-  formData.append('cropImage', document.getElementById('cropImage').files[0]);
-  formData.append('fieldCode', document.getElementById('field').value);
+  formData.append("cropCode", document.getElementById("cropCode").value);
+  formData.append(
+    "cropCommonName",
+    document.getElementById("cropCommonName").value
+  );
+  formData.append(
+    "cropScientificName",
+    document.getElementById("cropScientificName").value
+  );
+  formData.append("category", document.getElementById("cropCategory").value);
+  formData.append("cropSeason", document.getElementById("cropSeason").value);
+  formData.append("cropImage", document.getElementById("cropImage").files[0]);
+  formData.append("fieldCode", document.getElementById("field").value);
 
-  fetch('http://localhost:5050/cropMonitoring/api/v1/crops', {
-    method: 'POST',
-    body: formData
+  fetch("http://localhost:5050/cropMonitoring/api/v1/crops", {
+    method: "POST",
+    body: formData,
   })
-  .then(response => response.json())
-  .then(data => {
-    alert('Crop saved successfully!');
-    clearForm();
-  })
-  .catch(error => console.error('Error:', error));
+    .then((response) => response.json())
+    .then((data) => {
+      alert("Crop saved successfully!");
+      clearForm();
+    })
+    .catch((error) => console.error("Error:", error));
 });
 
-document.getElementById('clearBtn').addEventListener('click', clearForm);
+document.getElementById("clearBtn").addEventListener("click", clearForm);
 
 function clearForm() {
-  document.getElementById('cropForm').reset();
-  document.getElementById('cropCode').value = generateCropCode(); 
-  document.getElementById('cropImagePreview').src = '';
-  document.getElementById('cropImagePreview').style.display = 'none';
+  document.getElementById("cropForm").reset();
+  document.getElementById("cropCode").value = generateCropCode();
+  document.getElementById("cropImagePreview").src = "";
+  document.getElementById("cropImagePreview").style.display = "none";
 }
 
 //search
-document.getElementById('searchBtn').addEventListener('click', searchCrop);
+document.getElementById("searchBtn").addEventListener("click", searchCrop);
 
-document.getElementById('searchInput').addEventListener('keypress', function (e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    searchCrop();
-  }
-});
+document
+  .getElementById("searchInput")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchCrop();
+    }
+  });
 
 function searchCrop() {
-  const searchValue = document.getElementById('searchInput').value;
+  const searchValue = document.getElementById("searchInput").value;
 
-  fetch(`http://localhost:5050/cropMonitoring/api/v1/crops?searchTerm=${searchValue}`)
-    .then(response => response.json())
-    .then(data => {
+  fetch(
+    `http://localhost:5050/cropMonitoring/api/v1/crops?searchTerm=${searchValue}`
+  )
+    .then((response) => response.json())
+    .then((data) => {
       if (data.length > 0) {
         const crop = data[0];
-        document.getElementById('cropCode').value = crop.cropCode;
-        document.getElementById('cropCommonName').value = crop.cropCommonName;
-        document.getElementById('cropScientificName').value = crop.cropScientificName;
-        document.getElementById('cropCategory').value = crop.category;
-        document.getElementById('cropSeason').value = crop.cropSeason;
-        document.getElementById('field').value = crop.fieldCode;
+        document.getElementById("cropCode").value = crop.cropCode;
+        document.getElementById("cropCommonName").value = crop.cropCommonName;
+        document.getElementById("cropScientificName").value =
+          crop.cropScientificName;
+        document.getElementById("cropCategory").value = crop.category;
+        document.getElementById("cropSeason").value = crop.cropSeason;
+
+        const fieldSelect = document.getElementById("field");
+        for (let i = 0; i < fieldSelect.options.length; i++) {
+          if (fieldSelect.options[i].value === crop.fieldCode) {
+            fieldSelect.selectedIndex = i;
+            break;
+          }
+        }
 
         if (crop.cropImage) {
-          const cropImagePreview = document.getElementById('cropImagePreview');
+          const cropImagePreview = document.getElementById("cropImagePreview");
           cropImagePreview.src = `data:image/png;base64,${crop.cropImage}`;
-          cropImagePreview.style.display = 'block';
+          cropImagePreview.style.display = "block";
         } else {
-          document.getElementById('cropImagePreview').style.display = 'none';
+          document.getElementById("cropImagePreview").style.display = "none";
         }
       } else {
-        alert('Crop not found.');
+        alert("Crop not found.");
       }
     })
-    .catch(error => console.error('Error:', error));
+    .catch((error) => console.error("Error:", error));
 }
 
 //delete
-document.getElementById('deleteBtn').addEventListener('click', function (e) {
-  e.preventDefault(); 
+document.getElementById("deleteBtn").addEventListener("click", function (e) {
+  e.preventDefault();
 
-  const cropCode = document.getElementById('cropCode').value;
+  const cropCode = document.getElementById("cropCode").value;
 
   fetch(`http://localhost:5050/cropMonitoring/api/v1/crops/${cropCode}`, {
-    method: 'DELETE'
+    method: "DELETE",
   })
-  .then(response => {
-    if (response.ok) {
-      alert('Crop deleted successfully!');
-      clearForm();
-    } else {
-      alert('Failed to delete the crop.');
-    }
-  })
-  .catch(error => console.error('Error:', error));
+    .then((response) => {
+      if (response.ok) {
+        alert("Crop deleted successfully!");
+        clearForm();
+      } else {
+        alert("Failed to delete the crop.");
+      }
+    })
+    .catch((error) => console.error("Error:", error));
 });
 
 //update
-document.getElementById('updateBtn').addEventListener('click', function (e) {
+document.getElementById("updateBtn").addEventListener("click", function (e) {
   e.preventDefault();
 
-  const cropCode = document.getElementById('cropCode').value;
+  const cropCode = document.getElementById("cropCode").value;
   const formData = new FormData();
 
-  formData.append('cropCommonName', document.getElementById('cropCommonName').value);
-  formData.append('cropScientificName', document.getElementById('cropScientificName').value);
-  formData.append('category', document.getElementById('cropCategory').value);
-  formData.append('cropSeason', document.getElementById('cropSeason').value);
-  formData.append('cropImage', document.getElementById('cropImage').files[0]);
-  formData.append('fieldCode', document.getElementById('field').value);
+  formData.append(
+    "cropCommonName",
+    document.getElementById("cropCommonName").value
+  );
+  formData.append(
+    "cropScientificName",
+    document.getElementById("cropScientificName").value
+  );
+  formData.append("category", document.getElementById("cropCategory").value);
+  formData.append("cropSeason", document.getElementById("cropSeason").value);
+  formData.append("cropImage", document.getElementById("cropImage").files[0]);
+  formData.append("fieldCode", document.getElementById("field").value);
 
   fetch(`http://localhost:5050/cropMonitoring/api/v1/crops/${cropCode}`, {
-    method: 'PATCH',
-    body: formData
+    method: "PATCH",
+    body: formData,
   })
-  .then(response => {
-    if (response.ok) {
-      alert('Crop updated successfully!');
-      clearForm();
-    } else {
-      alert('Failed to update the crop.');
-    }
-  })
-  .catch(error => console.error('Error:', error));
+    .then((response) => {
+      if (response.ok) {
+        alert("Crop updated successfully!");
+        clearForm();
+      } else {
+        alert("Failed to update the crop.");
+      }
+    })
+    .catch((error) => console.error("Error:", error));
 });
-
-
