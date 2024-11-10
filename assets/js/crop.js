@@ -11,6 +11,7 @@ function setCropCode() {
 
 window.onload = function () {
   setCropCode();
+  loadFields();
 };
 
 function previewCropImage() {
@@ -32,38 +33,47 @@ function previewCropImage() {
   }
 }
 
-document.getElementById("clearBtn").addEventListener("click", function () {
-  setCropCode();
-  document.getElementById("cropForm").reset();
+function loadFields() {
+  fetch('http://localhost:5050/cropMonitoring/api/v1/fields/allFields')
+    .then(response => response.json())
+    .then(data => {
+      const fieldSelect = document.getElementById('field');
+      fieldSelect.innerHTML = '<option value="" disabled selected>Select Field</option>';
+
+      data.forEach(field => {
+        const option = document.createElement('option');
+        option.value = field.fieldCode; 
+        option.text = `${field.fieldCode} - ${field.fieldName}`;
+        fieldSelect.appendChild(option);
+      });
+    })
+    .catch(error => console.error('Error loading fields:', error));
+}
+
+document.getElementById('saveBtn').addEventListener('click', function (e) {
+  e.preventDefault(); 
+
+  const formData = new FormData();
+  formData.append('cropCode', document.getElementById('cropCode').value);
+  formData.append('cropCommonName', document.getElementById('cropCommonName').value);
+  formData.append('cropScientificName', document.getElementById('cropScientificName').value);
+  formData.append('category', document.getElementById('cropCategory').value);
+  formData.append('cropSeason', document.getElementById('cropSeason').value);
+  formData.append('cropImage', document.getElementById('cropImage').files[0]);
+  formData.append('fieldCode', document.getElementById('field').value);
+
+  fetch('http://localhost:5050/cropMonitoring/api/v1/crops', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('Crop saved successfully!');
+    clearForm();
+  })
+  .catch(error => console.error('Error:', error));
 });
 
-document.getElementById("saveBtn").addEventListener("click", function (e) {
-  e.preventDefault();
-  alert("Save functionality for the crop goes here");
-});
 
-document.getElementById("updateBtn").addEventListener("click", function () {
-  alert("Update functionality for the crop goes here");
-});
 
-document.getElementById("deleteBtn").addEventListener("click", function () {
-  alert("Delete functionality for the crop goes here");
-});
 
-// Get all crops
-document.getElementById("getAllBtn").addEventListener("click", function () {
-  // const cropTableBody = document.getElementById("cropTableBody");
-  // cropTableBody.innerHTML = `
-  //   <tr>
-  //     <td>C-1001</td><td>Rice</td><td>Oryza sativa</td><td>Cereal</td><td>Kharif</td><td>Staff 1</td><td>Requires ample water</td>
-  //   </tr>
-  //   <tr>
-  //     <td>C-1002</td><td>Cowpea</td><td>Vigna unguiculata</td><td>Legume</td><td>Rabi</td><td>Staff 2</td><td>N/A</td>
-  //   </tr>
-  // `;
-});
-
-document.getElementById("searchBtn").addEventListener("click", function () {
-  const cropCode = document.getElementById("searchCrop").value;
-  alert("Search functionality for crop code " + cropCode + " goes here");
-});
