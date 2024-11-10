@@ -123,6 +123,24 @@ function searchCrop() {
 }
 
 //delete
+document.getElementById('deleteBtn').addEventListener('click', function (e) {
+  e.preventDefault(); 
+
+  const cropCode = document.getElementById('cropCode').value;
+
+  fetch(`http://localhost:5050/cropMonitoring/api/v1/crops/${cropCode}`, {
+    method: 'DELETE'
+  })
+  .then(response => {
+    if (response.ok) {
+      alert('Crop deleted successfully!');
+      clearForm();
+    } else {
+      alert('Failed to delete the crop.');
+    }
+  })
+  .catch(error => console.error('Error:', error));
+});
 
 
 
