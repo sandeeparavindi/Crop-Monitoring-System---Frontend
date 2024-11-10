@@ -78,10 +78,51 @@ document.getElementById('clearBtn').addEventListener('click', clearForm);
 
 function clearForm() {
   document.getElementById('cropForm').reset();
-  document.getElementById('cropCode').value = generateCropCode(); // Reset crop code
+  document.getElementById('cropCode').value = generateCropCode(); 
   document.getElementById('cropImagePreview').src = '';
   document.getElementById('cropImagePreview').style.display = 'none';
 }
+
+//search
+document.getElementById('searchBtn').addEventListener('click', searchCrop);
+
+document.getElementById('searchInput').addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    searchCrop();
+  }
+});
+
+function searchCrop() {
+  const searchValue = document.getElementById('searchInput').value;
+
+  fetch(`http://localhost:5050/cropMonitoring/api/v1/crops?searchTerm=${searchValue}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.length > 0) {
+        const crop = data[0];
+        document.getElementById('cropCode').value = crop.cropCode;
+        document.getElementById('cropCommonName').value = crop.cropCommonName;
+        document.getElementById('cropScientificName').value = crop.cropScientificName;
+        document.getElementById('cropCategory').value = crop.category;
+        document.getElementById('cropSeason').value = crop.cropSeason;
+        document.getElementById('field').value = crop.fieldCode;
+
+        if (crop.cropImage) {
+          const cropImagePreview = document.getElementById('cropImagePreview');
+          cropImagePreview.src = `data:image/png;base64,${crop.cropImage}`;
+          cropImagePreview.style.display = 'block';
+        } else {
+          document.getElementById('cropImagePreview').style.display = 'none';
+        }
+      } else {
+        alert('Crop not found.');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+//delete
 
 
 
