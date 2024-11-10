@@ -74,6 +74,14 @@ document.getElementById('saveBtn').addEventListener('click', function (e) {
   .catch(error => console.error('Error:', error));
 });
 
+document.getElementById('clearBtn').addEventListener('click', clearForm);
+
+function clearForm() {
+  document.getElementById('cropForm').reset();
+  document.getElementById('cropCode').value = generateCropCode(); // Reset crop code
+  document.getElementById('cropImagePreview').src = '';
+  document.getElementById('cropImagePreview').style.display = 'none';
+}
 
 
 
