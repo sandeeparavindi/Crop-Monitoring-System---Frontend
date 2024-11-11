@@ -197,3 +197,20 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
     })
     .catch((error) => console.error("Error:", error));
 });
+
+//get all click
+$(document).ready(function () {
+  $("#getAllBtn").click(function () {
+    $.ajax({
+      url: 'http://localhost:5050/cropMonitoring/api/v1/crops/allcrops', 
+      type: 'GET',
+      success: function (crops) {
+        localStorage.setItem('cropData', JSON.stringify(crops));
+        window.location.href = "/pages/crop-list.html";
+      },
+      error: function (error) {
+        console.error("Error fetching crops: ", error);
+      }
+    });
+  });
+});
