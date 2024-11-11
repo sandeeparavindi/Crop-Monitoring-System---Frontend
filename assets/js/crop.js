@@ -93,54 +93,45 @@ function clearForm() {
 }
 
 //search
-document.getElementById("searchBtn").addEventListener("click", searchCrop);
+document.getElementById("searchBtn").addEventListener("click", function () {
+  searchVehicle();
+});
 
-document
-  .getElementById("searchInput")
-  .addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      searchCrop();
-    }
-  });
+document.getElementById("searchInput").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    searchVehicle();
+  }
+});
 
-function searchCrop() {
-  const searchValue = document.getElementById("searchInput").value;
+function searchVehicle() {
+  const searchTerm = document.getElementById("searchInput").value.trim();
 
-  fetch(
-    `http://localhost:5050/cropMonitoring/api/v1/crops?searchTerm=${searchValue}`
-  )
+  fetch(`http://localhost:5050/cropMonitoring/api/v1/vehicles?searchTerm=${searchTerm}`)
     .then((response) => response.json())
-    .then((data) => {
-      if (data.length > 0) {
-        const crop = data[0];
-        document.getElementById("cropCode").value = crop.cropCode;
-        document.getElementById("cropCommonName").value = crop.cropCommonName;
-        document.getElementById("cropScientificName").value =
-          crop.cropScientificName;
-        document.getElementById("cropCategory").value = crop.category;
-        document.getElementById("cropSeason").value = crop.cropSeason;
-
-        const fieldSelect = document.getElementById("field");
-        for (let i = 0; i < fieldSelect.options.length; i++) {
-          if (fieldSelect.options[i].value === crop.fieldCode) {
-            fieldSelect.selectedIndex = i;
-            break;
-          }
-        }
-
-        if (crop.cropImage) {
-          const cropImagePreview = document.getElementById("cropImagePreview");
-          cropImagePreview.src = `data:image/png;base64,${crop.cropImage}`;
-          cropImagePreview.style.display = "block";
-        } else {
-          document.getElementById("cropImagePreview").style.display = "none";
-        }
+    .then((vehicleData) => {
+      if (vehicleData && vehicleData.length > 0) {
+        fillVehicleForm(vehicleData[0]);
       } else {
-        alert("Crop not found.");
+        alert("Vehicle not found");
       }
     })
     .catch((error) => console.error("Error:", error));
+}
+
+function fillVehicleForm(vehicle) {
+  document.getElementById("vehicleCode").value = vehicle.vehicleCode;
+  document.getElementById("licensePlate").value = vehicle.licensePlateNumber;
+  document.getElementById("vehicleCategory").value = vehicle.vehicleCategory;
+  document.getElementById("fuelType").value = vehicle.fuelType;
+  document.getElementById("status").value = vehicle.status;
+  document.getElementById("remarks").value = vehicle.remarks;
+
+  if (vehicle.staff && vehicle.staff.length > 0) {
+    document.getElementById("staff").value = vehicle.staff[0].staffCode;
+  } else {
+    document.getElementById("staff").value = ""; 
+  }
 }
 
 //delete

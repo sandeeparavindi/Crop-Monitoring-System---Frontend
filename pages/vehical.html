@@ -47,25 +47,27 @@
               <option value="" disabled selected>
                 Select Vehical Category
               </option>
-              <option value="car">Car</option>
-              <option value="van">Van</option>
-              <option value="bike">Motorbikes</option>
-              <option value="lan-master">Tractors-Land masters</option>
-              <option value="4wd">Tractors-4WD</option>
-              <option value="truck">Tankers truck</option>
-              <option value="land-vehical">Land vehicles</option>
-              <option value="lorry">Lorry</option>
+              <option value="Car">Car</option>
+              <option value="Van">Van</option>
+              <option value="Motorbikes">Motorbikes</option>
+              <option value="Tractors-Land masters">
+                Tractors-Land masters
+              </option>
+              <option value="Tractors-4WD">Tractors-4WD</option>
+              <option value="Tankers truck">Tankers truck</option>
+              <option value="Land vehicles">Land vehicles</option>
+              <option value="Lorry">Lorry</option>
             </select>
           </div>
           <div class="col-md-6">
             <label for="fuelType" class="form-label">Fuel Type</label>
             <select class="form-select" id="fuelType" required>
               <option value="" disabled selected>Select Fuel Type</option>
-              <option value="car">Petrol</option>
-              <option value="van">Diesel</option>
-              <option value="bike">Kerosene</option>
-              <option value="lan-master">Fuel oil</option>
-              <option value="4wd">Bitumen</option>
+              <option value="Petrol">Petrol</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Kerosene">Kerosene</option>
+              <option value="Fuel oil">Fuel oil</option>
+              <option value="Bitumen">Bitumen</option>
             </select>
           </div>
         </div>
@@ -122,20 +124,20 @@
             Get All Vehicles
           </button>
         </div>
+        <!-- Search -->
+        <div class="mb-3">
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Search by Vehicle code or Licen Plate Number..."
+            style="margin-top: 20px"
+          />
+          <button type="button" class="btn btn-secondary mt-2" id="searchBtn">
+            Search
+          </button>
+        </div>
       </form>
-
-      <!-- Search -->
-      <div class="mb-3">
-        <input
-          type="text"
-          id="searchVehicle"
-          class="form-control"
-          placeholder="Search by Vehicle Code"
-        />
-        <button type="button" class="btn btn-secondary mt-2" id="searchBtn">
-          Search
-        </button>
-      </div>
     </div>
 
     <script
