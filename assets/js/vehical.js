@@ -142,3 +142,8 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
     })
     .catch((error) => console.error("Error:", error));
 });
+
+//get all click
+document.getElementById('getAllBtn').addEventListener('click', function () {
+  window.location.href = 'vehicle-list.html';
+});
