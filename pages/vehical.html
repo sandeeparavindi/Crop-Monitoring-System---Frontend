@@ -11,9 +11,13 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    <link rel="stylesheet" href="/assets/css/loader.css" />
   </head>
 
   <body id="body-pd" class="bg-light">
+    <div id="page-loader" class="loader-wrapper">
+      <div class="loader"></div>
+    </div>
     <div id="sidebar-container"></div>
     <div class="container mt-4">
       <h2 class="text-center" style="margin-top: 100px">Vehicle Management</h2>
@@ -81,12 +85,12 @@
               <option value="Out of Service">Out of Service</option>
             </select>
           </div>
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <label for="staff" class="form-label">Allocated Staff Member</label>
             <select class="form-select" id="staff">
               <option value="" disabled selected>Select Staff</option>
             </select>
-          </div>
+          </div> -->
         </div>
 
         <div class="row mb-3">
@@ -145,6 +149,8 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="/assets/js/loader.js"></script>
     <script src="/assets/js/vehical.js"></script>
     <script src="/assets/js/sidebarControl.js"></script>
   </body>

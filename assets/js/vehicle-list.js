@@ -13,7 +13,6 @@ $(document).ready(function () {
               <td>${vehicle.fuelType}</td>
               <td>${vehicle.status}</td>
               <td>${vehicle.remarks}</td>
-              <td>${vehicle.staff.map((s) => s.name).join(", ")}</td>
             </tr>
           `);
       });

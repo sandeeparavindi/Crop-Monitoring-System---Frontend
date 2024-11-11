@@ -18,8 +18,6 @@ $(document).ready(function () {
               <td>${field.fieldName}</td>
               <td>${field.fieldLocation}</td>
               <td>${field.extentSize}</td>
-              <td>${field.crops}</td>
-              <td>${field.staff}</td>
               <td>${fieldImage1} ${fieldImage2}</td> <!-- Images Column -->
             </tr>
           `);
