@@ -19,8 +19,25 @@
     </div>
     <div id="sidebar-container"></div>
     <div class="container mt-4">
-      <h2 class="text-center" style="margin-top: 100px">Staff Management</h2>
-
+      <div
+        class="d-flex justify-content-between align-items-center"
+        style="margin-top: 100px"
+      >
+        <h2 class="text-center">Staff Management</h2>
+        <!-- Search bar -->
+        <div class="d-flex" style="width: 500px">
+          <input
+            type="text"
+            id="searchStaff"
+            class="form-control me-2"
+            placeholder="Search by Staff ID"
+            style="flex: 1"
+          />
+          <button type="button" class="btn btn-secondary" id="searchBtn">
+            Search
+          </button>
+        </div>
+      </div>
       <!-- Staff Form -->
       <form id="staffForm" class="mb-4">
         <div class="row mb-3">
@@ -78,6 +95,41 @@
         </div>
 
         <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="Address line 1" class="form-label"
+              >Address Line 01</label
+            >
+            <input type="text" class="form-control" id="address1" required />
+          </div>
+          <div class="col-md-6">
+            <label for="Address line 2" class="form-label"
+              >Address Line 02</label
+            >
+            <input type="text" class="form-control" id="address2" required />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="Address line 3" class="form-label"
+              >Address Line 03</label
+            >
+            <input type="text" class="form-control" id="address3" />
+          </div>
+          <div class="col-md-4">
+            <label for="Address line 4" class="form-label"
+              >Address Line 04</label
+            >
+            <input type="text" class="form-control" id="address4" />
+          </div>
+          <div class="col-md-4">
+            <label for="Address line 5" class="form-label"
+              >Address Line 05</label
+            >
+            <input type="text" class="form-control" id="address5" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
           <div class="col-md-12">
             <label for="contactNo" class="form-label">Contact Number</label>
             <input type="text" class="form-control" id="contactNo" required />
@@ -101,9 +153,8 @@
             </select>
           </div>
         </div>
-
-        <div class="row mb-3">
-          <!-- <div class="col-md-6">
+        <!-- <div class="row mb-3"> -->
+        <!-- <div class="col-md-6">
             <label for="allocatedFields" class="form-label"
               >Allocated Fields</label
             >
@@ -112,7 +163,7 @@
               <option value="n/a">N/A</option>
             </select>
           </div> -->
-          <!-- <div class="col-md-6">
+        <!-- <div class="col-md-6">
             <label for="allocatedVehicles" class="form-label"
               >Allocated Vehicles</label
             >
@@ -123,8 +174,7 @@
               <option value="n/a">N/A</option>
             </select>
           </div> -->
-        </div>
-
+        <!-- </div> -->
         <div class="d-flex justify-content-between">
           <button type="submit" class="btn btn-success" id="saveBtn">
             Save
@@ -149,19 +199,6 @@
           </button>
         </div>
       </form>
-
-      <!-- Search -->
-      <div class="mb-3">
-        <input
-          type="text"
-          id="searchStaff"
-          class="form-control"
-          placeholder="Search by Staff ID"
-        />
-        <button type="button" class="btn btn-secondary mt-2" id="searchBtn">
-          Search
-        </button>
-      </div>
     </div>
 
     <script
