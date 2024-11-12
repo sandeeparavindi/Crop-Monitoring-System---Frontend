@@ -28,7 +28,7 @@ function clearForm() {
 document.getElementById("saveBtn").addEventListener("click", function (e) {
   e.preventDefault();
 
-  const staffSelection = document.getElementById("staff").value;
+  // const staffSelection = document.getElementById("staff").value;
 
   const vehicleData = {
     vehicleCode: document.getElementById("vehicleCode").value,
@@ -36,7 +36,7 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
     vehicleCategory: document.getElementById("vehicleCategory").value,
     fuelType: document.getElementById("fuelType").value,
     status: document.getElementById("status").value,
-    staff: [{ staffCode: staffSelection }],
+    // staff: [{ staffCode: staffSelection }],
     remarks: document.getElementById("remarks").value,
   };
 
@@ -103,7 +103,7 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
     fuelType: document.getElementById("fuelType").value,
     status: document.getElementById("status").value,
     remarks: document.getElementById("remarks").value,
-    staff: [{ staffCode: document.getElementById("staff").value }],
+    // staff: [{ staffCode: document.getElementById("staff").value }],
   };
 
   const vehicleCode = document.getElementById("vehicleCode").value;
