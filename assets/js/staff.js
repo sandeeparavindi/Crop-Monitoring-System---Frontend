@@ -20,3 +20,19 @@ $(document).ready(function () {
   });
 });
   
+//get all vehicles 
+$(document).ready(function () {
+  $.ajax({
+      type: 'GET',
+      url: 'http://localhost:5050/cropMonitoring/api/v1/vehicles/allVehicles',
+      success: function (data) {
+          const vehicleSelect = $('#allocatedVehicles');
+          data.forEach(vehicle => {
+              vehicleSelect.append(new Option(`${vehicle.vehicleCode} - ${vehicle.vehicleCategory}`, vehicle.vehicleCode));
+          });
+      },
+      error: function () {
+          alert('Failed to load vehicles.');
+      }
+  });
+});
