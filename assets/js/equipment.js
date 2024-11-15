@@ -53,75 +53,84 @@ function loadStaffs() {
 
 //save
 document.getElementById("saveBtn").addEventListener("click", function (e) {
-    e.preventDefault();
-    
-    const equipmenteData = {
-      equipmentId: document.getElementById("equipmentId").value,
-      equipmentName: document.getElementById("equipmentName").value,
-      equipmentType: document.getElementById("equipmentType").value,
-      equipmentStatus: document.getElementById("status").value,
-      fieldCode: document.getElementById("assignedField").value,
-      id: document.getElementById("assignedStaff").value,
-    };
-  
-    fetch("http://localhost:5050/cropMonitoring/api/v1/equipment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(equipmenteData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.text();
-        } else {
-          throw new Error("Failed to save vehicle data.");
-        }
-      })
-      .then((data) => {
-        alert("Success save equipment" + data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert("Error: " + error.message);
-      });
-  });
-  
- // Search
-function searchEquipment() {
-    const searchTerm = $('#searchEquipment').val().trim();
-    if (!searchTerm) {
-      alert("Please enter an Equipment ID or Name to search.");
-      return;
-    }
-  
-    $.ajax({
-      type: 'GET',
-      url: `http://localhost:5050/cropMonitoring/api/v1/equipment?searchTerm=${searchTerm}`,
-      success: function (data) {
-        if (data && data.length > 0) {
-          populateEquipmentForm(data[0]);
-        } else {
-          alert("No equipment found with the provided ID or Name.");
-        }
-      },
-      error: function () {
-        alert("An error occurred while searching. Please try again.");
+  e.preventDefault();
+
+  const equipmenteData = {
+    equipmentId: document.getElementById("equipmentId").value,
+    equipmentName: document.getElementById("equipmentName").value,
+    equipmentType: document.getElementById("equipmentType").value,
+    equipmentStatus: document.getElementById("status").value,
+    fieldCode: document.getElementById("assignedField").value,
+    id: document.getElementById("assignedStaff").value,
+  };
+
+  fetch("http://localhost:5050/cropMonitoring/api/v1/equipment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(equipmenteData),
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.text();
+      } else {
+        throw new Error("Failed to save vehicle data.");
       }
+    })
+    .then((data) => {
+      alert("Success save equipment" + data);
+      clearForm();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("Error: " + error.message);
     });
+});
+
+// Search
+function searchEquipment() {
+  const searchTerm = $("#searchEquipment").val().trim();
+  if (!searchTerm) {
+    alert("Please enter an Equipment ID or Name to search.");
+    return;
   }
-  
-  $('#searchBtn').click(searchEquipment);
-  $('#searchEquipment').keypress(function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      searchEquipment();
-    }
+
+  $.ajax({
+    type: "GET",
+    url: `http://localhost:5050/cropMonitoring/api/v1/equipment?searchTerm=${searchTerm}`,
+    success: function (data) {
+      if (data && data.length > 0) {
+        populateEquipmentForm(data[0]);
+      } else {
+        alert("No equipment found with the provided ID or Name.");
+      }
+    },
+    error: function () {
+      alert("An error occurred while searching. Please try again.");
+    },
   });
-  
-  function populateEquipmentForm(equipment) {
-    $('#equipmentId').val(equipment.equipmentId);
-    $('#equipmentName').val(equipment.equipmentName);
-    $('#equipmentType').val(equipment.equipmentType);
-    $('#status').val(equipment.equipmentStatus);
-    $('#assignedField').val(equipment.fieldCode);
-    $('#assignedStaff').val(equipment.id);
+}
+
+$("#searchBtn").click(searchEquipment);
+$("#searchEquipment").keypress(function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    searchEquipment();
   }
+});
+
+function populateEquipmentForm(equipment) {
+  $("#equipmentId").val(equipment.equipmentId);
+  $("#equipmentName").val(equipment.equipmentName);
+  $("#equipmentType").val(equipment.equipmentType);
+  $("#status").val(equipment.equipmentStatus);
+  $("#assignedField").val(equipment.fieldCode);
+  $("#assignedStaff").val(equipment.id);
+}
+
+//clear
+function clearForm() {
+  $("#equipmentForm")[0].reset();
+  setEquipmentId();
+}
+
+$("#clearBtn").click(clearForm);
