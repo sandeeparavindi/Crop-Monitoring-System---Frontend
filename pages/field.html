@@ -16,6 +16,38 @@
     />
     <link rel="stylesheet" href="/assets/css/loader.css" />
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    <style>
+      #staffAssignmentModal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 600px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1049;
+      }
+
+      #staffAssignmentModal table {
+        width: 100%;
+        margin: 0 auto;
+      }
+    </style>
   </head>
   <style>
     .select2-container--default .select2-selection--multiple {
@@ -60,6 +92,38 @@
           <button type="button" class="btn btn-info" id="addStaff">
             + Assign Staff
           </button>
+        </div>
+        <!-- Assign Staff Modal -->
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div id="staffAssignmentModal">
+          <div class="p-3">
+            <h5 class="text-center mb-3">Staff Assignment Details</h5>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Field</th>
+                  <th>Staff</th>
+                  <th>Assigned Role</th>
+                  <th>Assignment Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Field A</td>
+                  <td>John Doe</td>
+                  <td>Manager</td>
+                  <td>2024-11-10</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="text-center">
+              <button class="btn btn-secondary mt-3" id="closeModal">
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Form Section -->
@@ -159,13 +223,7 @@
           <button type="button" class="btn btn-danger" id="deleteBtn">
             Delete
           </button>
-          <button
-            type="button"
-            class="btn btn-info"
-            data-bs-toggle="modal"
-            data-bs-target="#fieldListModal"
-            id="getAllBtn"
-          >
+          <button type="button" class="btn btn-info" id="getAllBtn">
             Get All Fields
           </button>
         </div>

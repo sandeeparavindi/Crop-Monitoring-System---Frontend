@@ -32,26 +32,26 @@ document.getElementById("fieldImage2").addEventListener("change", function () {
   previewImage(this, "previewImage2");
 });
 
-//clear 
+//clear
 $("#clearBtn").click(function (e) {
   e.preventDefault();
 
-  $("#fieldCode").val('');
-  $("#fieldName").val('');
-  $("#fieldLocation").val('');
-  $("#fieldSize").val('');
+  $("#fieldCode").val("");
+  $("#fieldName").val("");
+  $("#fieldLocation").val("");
+  $("#fieldSize").val("");
 
-  $("#crops").val(null).trigger('change');
-  $("#staff").val(''); 
+  $("#crops").val(null).trigger("change");
+  $("#staff").val("");
 
   const previewImage1 = document.getElementById("previewImage1");
   const previewImage2 = document.getElementById("previewImage2");
 
-  previewImage1.src = ''; 
-  previewImage1.style.display = 'none'; 
+  previewImage1.src = "";
+  previewImage1.style.display = "none";
 
-  previewImage2.src = '';  
-  previewImage2.style.display = 'none'; 
+  previewImage2.src = "";
+  previewImage2.style.display = "none";
 
   alert("Form cleared successfully!");
 });
@@ -76,7 +76,7 @@ $(document).ready(function () {
         $("#fieldLocation").val(response.fieldLocation);
         $("#fieldSize").val(response.extentSize);
 
-        $("#crops").val(response.crops).trigger('change');
+        $("#crops").val(response.crops).trigger("change");
         $("#staff").val(response.staff);
 
         if (response.fieldImage1) {
@@ -95,7 +95,10 @@ $(document).ready(function () {
       },
       error: function (xhr) {
         console.error("Error:", xhr.responseText);
-        alert("Failed to find field: " + (xhr.responseText || "Unknown error occurred"));
+        alert(
+          "Failed to find field: " +
+            (xhr.responseText || "Unknown error occurred")
+        );
       },
     });
   }
@@ -106,7 +109,7 @@ $(document).ready(function () {
   });
 
   $("#searchField").on("keypress", function (e) {
-    if (e.which === 13) { 
+    if (e.which === 13) {
       e.preventDefault();
       performSearch();
     }
@@ -132,7 +135,7 @@ $(document).ready(function () {
     $("#crops").append(newOption).trigger("change");
   });
 
-//save
+  //save
   $(document).ready(function () {
     $("#saveBtn").click(function (e) {
       e.preventDefault();
@@ -167,10 +170,10 @@ $(document).ready(function () {
     });
   });
 
-//clear
+  //clear
   $("#clearBtn").click(function () {
     $("#fieldForm")[0].reset();
-    $("#searchField").val(''); 
+    $("#searchField").val("");
     setFieldCode();
   });
 });
@@ -191,12 +194,15 @@ $("#deleteBtn").click(function (e) {
     type: "DELETE",
     success: function () {
       alert("Field deleted successfully");
-      $("#fieldForm")[0].reset(); 
+      $("#fieldForm")[0].reset();
       setFieldCode();
     },
     error: function (xhr) {
       console.error("Error:", xhr.responseText);
-      alert("Failed to delete field: " + (xhr.responseText || "Unknown error occurred"));
+      alert(
+        "Failed to delete field: " +
+          (xhr.responseText || "Unknown error occurred")
+      );
     },
   });
 });
@@ -210,50 +216,64 @@ $("#updateBtn").click(function (e) {
 
   const fieldName = $("#fieldName").val();
   if (fieldName) {
-      formData.append("fieldName", fieldName);
+    formData.append("fieldName", fieldName);
   }
 
   const fieldLocation = $("#fieldLocation").val();
   if (fieldLocation) {
-      formData.append("fieldLocation", fieldLocation);
+    formData.append("fieldLocation", fieldLocation);
   }
 
   const extentSize = $("#fieldSize").val();
   if (extentSize) {
-      formData.append("extentSize", extentSize);
+    formData.append("extentSize", extentSize);
   }
 
   const fieldImage1 = $("#fieldImage1")[0].files[0];
   if (fieldImage1) {
-      formData.append("fieldImage1", fieldImage1);
+    formData.append("fieldImage1", fieldImage1);
   }
 
   const fieldImage2 = $("#fieldImage2")[0].files[0];
   if (fieldImage2) {
-      formData.append("fieldImage2", fieldImage2);
+    formData.append("fieldImage2", fieldImage2);
   }
 
   $.ajax({
-      url: `http://localhost:5050/cropMonitoring/api/v1/fields/${$("#fieldCode").val()}`,
-      type: "PATCH",
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function () {
-          alert("Field updated successfully");
-      },
-      error: function (xhr) {
-          console.error("Error:", xhr.responseText);
-          alert("Failed to update field: " + (xhr.responseText || "Unknown error occurred"));
-      },
+    url: `http://localhost:5050/cropMonitoring/api/v1/fields/${$(
+      "#fieldCode"
+    ).val()}`,
+    type: "PATCH",
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function () {
+      alert("Field updated successfully");
+    },
+    error: function (xhr) {
+      console.error("Error:", xhr.responseText);
+      alert(
+        "Failed to update field: " +
+          (xhr.responseText || "Unknown error occurred")
+      );
+    },
   });
 });
 
 //getall
 $(document).ready(function () {
-  $('#getAllBtn').click(function () {
-    window.location.href = 'field-list.html'; 
+  $("#getAllBtn").click(function () {
+    window.location.href = "field-list.html";
   });
 });
 
+//open and close modal
+document.getElementById("addStaff").addEventListener("click", function () {
+  document.getElementById("modalOverlay").style.display = "block";
+  document.getElementById("staffAssignmentModal").style.display = "block";
+});
 
+document.getElementById("closeModal").addEventListener("click", function () {
+  document.getElementById("modalOverlay").style.display = "none";
+  document.getElementById("staffAssignmentModal").style.display = "none";
+});
