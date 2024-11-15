@@ -183,4 +183,28 @@ $("#updateBtn").on("click", function (event) {
   });
 });
 
+//delete
+$("#deleteBtn").on("click", function (event) {
+  event.preventDefault();
+  const staffId = $("#staffId").val();
 
+  if (!staffId) {
+    alert("Please select a staff member to delete.");
+    return;
+  }
+
+  if (confirm("Are you sure you want to delete this staff member?")) {
+    $.ajax({
+      url: `http://localhost:5050/cropMonitoring/api/v1/staff/${staffId}`,
+      method: "DELETE",
+      success: function () {
+        alert("Staff member deleted successfully.");
+        $("#staffForm")[0].reset();
+        generateStaffId();
+      },
+      error: function () {
+        alert("Failed to delete staff member. Please try again.");
+      }
+    });
+  }
+});
