@@ -55,7 +55,7 @@ function loadStaffs() {
 document.getElementById("saveBtn").addEventListener("click", function (e) {
     e.preventDefault();
     
-    const vehicleData = {
+    const equipmenteData = {
       equipmentId: document.getElementById("equipmentId").value,
       equipmentName: document.getElementById("equipmentName").value,
       equipmentType: document.getElementById("equipmentType").value,
@@ -67,7 +67,7 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
     fetch("http://localhost:5050/cropMonitoring/api/v1/equipment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(vehicleData),
+      body: JSON.stringify(equipmenteData),
     })
       .then((response) => {
         if (response.ok) {
@@ -85,3 +85,43 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
       });
   });
   
+ // Search
+function searchEquipment() {
+    const searchTerm = $('#searchEquipment').val().trim();
+    if (!searchTerm) {
+      alert("Please enter an Equipment ID or Name to search.");
+      return;
+    }
+  
+    $.ajax({
+      type: 'GET',
+      url: `http://localhost:5050/cropMonitoring/api/v1/equipment?searchTerm=${searchTerm}`,
+      success: function (data) {
+        if (data && data.length > 0) {
+          populateEquipmentForm(data[0]);
+        } else {
+          alert("No equipment found with the provided ID or Name.");
+        }
+      },
+      error: function () {
+        alert("An error occurred while searching. Please try again.");
+      }
+    });
+  }
+  
+  $('#searchBtn').click(searchEquipment);
+  $('#searchEquipment').keypress(function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchEquipment();
+    }
+  });
+  
+  function populateEquipmentForm(equipment) {
+    $('#equipmentId').val(equipment.equipmentId);
+    $('#equipmentName').val(equipment.equipmentName);
+    $('#equipmentType').val(equipment.equipmentType);
+    $('#status').val(equipment.equipmentStatus);
+    $('#assignedField').val(equipment.fieldCode);
+    $('#assignedStaff').val(equipment.id);
+  }
