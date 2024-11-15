@@ -163,3 +163,28 @@ $("#updateBtn").on("click", function (event) {
        }
     });
   });
+
+// Delete Equipment
+$("#deleteBtn").on("click", function (event) {
+    event.preventDefault();
+    const equipmentId = $("#equipmentId").val();
+  
+    if (!equipmentId) {
+      alert("Please select equipment to delete.");
+      return;
+    }
+  
+    if (confirm("Are you sure you want to delete this equipment?")) {
+      $.ajax({
+        url: `http://localhost:5050/cropMonitoring/api/v1/equipment/${equipmentId}`,
+        method: "DELETE",
+        success: function () {
+          alert("Equipment deleted successfully.");
+          clearForm();
+        },
+        error: function () {
+          alert("Failed to delete equipment. Please try again.");
+        }
+      });
+    }
+  });
