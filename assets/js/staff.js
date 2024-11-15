@@ -85,4 +85,55 @@ $("#saveBtn").on("click", function (event) {
   });
 });
 
+// Search 
+function searchStaff() {
+  const searchTerm = $('#searchStaff').val().trim();
+  if (!searchTerm) {
+    alert("Please enter a Staff ID or First Name to search.");
+    return;
+  }
+  
+  $.ajax({
+    type: 'GET',
+    url: `http://localhost:5050/cropMonitoring/api/v1/staff?searchTerm=${searchTerm}`,
+    success: function (data) {
+      if (data && data.length > 0) {
+        populateStaffForm(data[0]);
+      } else {
+        alert("No staff member found with the provided ID or First Name.");
+      }
+    },
+    error: function () {
+      alert("An error occurred while searching. Please try again.");
+    }
+  });
+}
+
+$('#searchBtn').click(searchStaff);
+$('#searchStaff').keypress(function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    searchStaff();
+  }
+});
+
+function populateStaffForm(staff) {
+  $('#staffId').val(staff.id);
+  $('#firstName').val(staff.firstName);
+  $('#lastName').val(staff.lastName);
+  $('#designation').val(staff.designation);
+  $('#gender').val(staff.gender);
+  $("#joinDate").val(new Date(staff.joinedDate).toISOString().slice(0, 10));
+  $("#dob").val(new Date(staff.dob).toISOString().slice(0, 10));
+  $('#contactNo').val(staff.contactNo);
+  $('#email').val(staff.email);
+  $('#address1').val(staff.addressLine01);
+  $('#address2').val(staff.addressLine02);
+  $('#address3').val(staff.addressLine03);
+  $('#address4').val(staff.addressLine04);
+  $('#address5').val(staff.addressLine05);
+  $('#role').val(staff.role);
+  $('#allocatedVehicles').val(staff.vehicleCode);
+}
+
 
