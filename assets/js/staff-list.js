@@ -71,8 +71,13 @@ $(document).ready(function () {
           <td>${staff.addressLine03}</td>
           <td>${staff.addressLine04}</td>
           <td>${staff.addressLine05}</td>
+          <td>${staff.contactNo}</td>
           <td>${staff.email}</td>
-          <td>${staff.vehicleCode} - ${vehicleCategory}</td>
+          <td>${staff.vehicleCode} - ${vehicleCategory}
+            <button class="btn btn-danger btn-sm float-end ms-2" data-staff-id="${staff.id}" data-vehicle-code="${staff.vehicleCode}">
+            Remove
+          </button>
+          </td>
         </tr>`;
       additionalDetailsTable.append(additionalRow);
     });
