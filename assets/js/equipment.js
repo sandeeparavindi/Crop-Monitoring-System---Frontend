@@ -50,3 +50,38 @@ function loadStaffs() {
     })
     .catch((error) => console.error("Error loading staff members:", error));
 }
+
+//save
+document.getElementById("saveBtn").addEventListener("click", function (e) {
+    e.preventDefault();
+    
+    const vehicleData = {
+      equipmentId: document.getElementById("equipmentId").value,
+      equipmentName: document.getElementById("equipmentName").value,
+      equipmentType: document.getElementById("equipmentType").value,
+      equipmentStatus: document.getElementById("status").value,
+      fieldCode: document.getElementById("assignedField").value,
+      id: document.getElementById("assignedStaff").value,
+    };
+  
+    fetch("http://localhost:5050/cropMonitoring/api/v1/equipment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(vehicleData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.text();
+        } else {
+          throw new Error("Failed to save vehicle data.");
+        }
+      })
+      .then((data) => {
+        alert("Success save equipment" + data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Error: " + error.message);
+      });
+  });
+  
