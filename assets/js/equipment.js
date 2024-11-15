@@ -134,3 +134,32 @@ function clearForm() {
 }
 
 $("#clearBtn").click(clearForm);
+
+// Update
+$("#updateBtn").on("click", function (event) {
+    event.preventDefault();
+  
+    const equipmentId = $("#equipmentId").val();
+    const equipmentData = {
+        equipmentName: $("#equipmentName").val(),
+        equipmentType: $("#equipmentType").val(),
+        equipmentStatus: $("#status").val(),
+        fieldCode: $("#assignedField").val(),
+        id: $("#assignedStaff").val(),
+    };
+  
+    $.ajax({
+       url: `http://localhost:5050/cropMonitoring/api/v1/equipment/${equipmentId}`,
+       method: "PATCH",
+       contentType: "application/json",
+       data: JSON.stringify(equipmentData),
+       success: function () {
+          alert("Equipment updated successfully.");
+          clearForm(); 
+       },
+       error: function (xhr) {
+          console.error("Error updating equipment:", xhr.responseText);
+          alert("Failed to update equipment. Please try again.");
+       }
+    });
+  });
