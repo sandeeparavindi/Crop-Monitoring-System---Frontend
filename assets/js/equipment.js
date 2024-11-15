@@ -11,29 +11,23 @@ function setEquipmentId() {
 
 window.onload = function () {
     setEquipmentId();
+    loadFields();
 };
 
-document.getElementById("clearBtn").addEventListener("click", function () {
-    document.getElementById("equipmentForm").reset();
-    setEquipmentId();
-});
-
-document.getElementById("saveBtn").addEventListener("click", function (e) {
-    e.preventDefault();
-    alert("Save functionality goes here");
-});
-
-document.getElementById("updateBtn").addEventListener("click", function () {
-    alert("Update functionality goes here");
-});
-
-document.getElementById("deleteBtn").addEventListener("click", function () {
-    alert("Delete functionality goes here");
-});
-
-document.getElementById("searchBtn").addEventListener("click", function () {
-    const equipmentId = document.getElementById("searchEquipment").value;
-});
-
-document.getElementById("getAllBtn").addEventListener("click", function () {
-});
+function loadFields() {
+    fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields")
+      .then((response) => response.json())
+      .then((data) => {
+        const fieldSelect = document.getElementById("assignedField");
+        fieldSelect.innerHTML =
+          '<option value="" disabled selected>Select Field</option>';
+  
+        data.forEach((field) => {
+          const option = document.createElement("option");
+          option.value = field.fieldCode;
+          option.text = `${field.fieldCode} - ${field.fieldName}`;
+          fieldSelect.appendChild(option);
+        });
+      })
+      .catch((error) => console.error("Error loading fields:", error));
+  }
