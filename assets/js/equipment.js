@@ -188,3 +188,21 @@ $("#deleteBtn").on("click", function (event) {
       });
     }
   });
+
+  //get all
+  $(document).ready(function () {
+    $('#getAllBtn').click(function () {
+      $.ajax({
+        url: 'http://localhost:5050/cropMonitoring/api/v1/equipment/allEquipment', 
+        method: 'GET',
+        success: function (response) {
+          sessionStorage.setItem('equipmentData', JSON.stringify(response));
+          window.location.href = '/pages/equipment-list.html';
+        },
+        error: function (error) {
+          console.error('Error fetching equipment data:', error);
+        }
+      });
+    });
+  });
+  
