@@ -136,4 +136,51 @@ function populateStaffForm(staff) {
   $('#allocatedVehicles').val(staff.vehicleCode);
 }
 
+//clear
+function clearForm() {
+  $('#staffForm')[0].reset();  
+  setStaffId(); 
+}
+
+$('#clearBtn').click(clearForm);
+
+//update
+$("#updateBtn").on("click", function (event) {
+  event.preventDefault();
+
+  const staffId = $("#staffId").val();
+  const staffData = {
+      firstName: $("#firstName").val(),
+      lastName: $("#lastName").val(),
+      designation: $("#designation").val(),
+      gender: $("#gender").val(),
+      joinedDate: $("#joinDate").val(),
+      dob: $("#dob").val(),
+      contactNo: $("#contactNo").val(),
+      email: $("#email").val(),
+      addressLine01: $("#address1").val(),
+      addressLine02: $("#address2").val(),
+      addressLine03: $("#address3").val(),
+      addressLine04: $("#address4").val(),
+      addressLine05: $("#address5").val(),
+      role: $("#role").val(),
+      vehicleCode: $("#allocatedVehicles").val(),
+  };
+
+  $.ajax({
+     url: `http://localhost:5050/cropMonitoring/api/v1/staff/${staffId}`,
+     method: "PATCH",
+     contentType: "application/json",
+     data: JSON.stringify(staffData),
+     success: function () {
+        alert("Staff member updated successfully.");
+        clearForm(); 
+     },
+     error: function (xhr) {
+        console.error("Error updating staff:", xhr.responseText);
+        alert("Failed to update staff member. Please try again.");
+     }
+  });
+});
+
 
