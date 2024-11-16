@@ -74,13 +74,55 @@ $(document).ready(function () {
           <td>${staff.contactNo}</td>
           <td>${staff.email}</td>
           <td>${staff.vehicleCode} - ${vehicleCategory}
-            <button class="btn btn-danger btn-sm float-end ms-2" data-staff-id="${staff.id}" data-vehicle-code="${staff.vehicleCode}">
-            Remove
-          </button>
+           ${
+             staff.isVehicleReturned
+               ? "" // No button if the vehicle is returned
+               : `<button class="btn btn-danger btn-sm float-end ms-2 remove-btn" 
+              data-staff-id="${staff.id}" 
+              data-vehicle-code="${staff.vehicleCode}">
+              Remove
+            </button>`
+           }
           </td>
         </tr>`;
       additionalDetailsTable.append(additionalRow);
     });
+
+    // remove vehicle
+    $(".remove-btn").click(function () {
+      const staffId = $(this).data("staff-id");
+      console.log("Removing vehicle for staff ID:", staffId);
+      returnVehicle(staffId);
+    });
+  }
+
+  async function returnVehicle(staffId) {
+    console.log("Attempting to update vehicle status for staff ID:", staffId);
+    const url = `http://localhost:5050/cropMonitoring/api/v1/staff/${staffId}/return-vehicle`;
+
+    try {
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 204) {
+        alert("Vehicle status updated to available.");
+        const button = $(`button[data-staff-id="${staffId}"]`);
+        const vehicleCell = button.closest("td");
+
+        vehicleCell.html("Not Allocated");
+      } else if (response.status === 404) {
+        alert("Staff or vehicle not found.");
+      } else {
+        alert(`Unexpected error: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error during API call:", error);
+      alert("Failed to update vehicle status. Check the console for details.");
+    }
   }
 
   fetchVehicles().then(() => {
