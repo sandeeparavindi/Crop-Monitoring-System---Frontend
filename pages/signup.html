@@ -17,7 +17,7 @@
     <div id="header"></div>
     <div class="container">
       <div class="heading">Sign Up</div>
-      <form action="" class="form">
+      <form action="" id="signupForm" class="form">
         <input
           required
           class="input"
@@ -36,9 +36,9 @@
         />
         <select class="input" name="role" id="role" required>
           <option value="" disabled selected>Select Role</option>
-          <option value="user">Manager</option>
-          <option value="user">Administrative</option>
-          <option value="user">Scientist</option>
+          <option value="manager">Manager</option>
+          <option value="administrative">Administrative</option>
+          <option value="scientist">Scientist</option>
         </select>
         <input class="signup-button" type="submit" value="Sign Up" />
       </form>
@@ -96,5 +96,7 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="/assets/js/signup.js"></script>
   </body>
 </html>
