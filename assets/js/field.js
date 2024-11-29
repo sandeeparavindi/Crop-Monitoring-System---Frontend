@@ -70,6 +70,9 @@ $(document).ready(function () {
     $.ajax({
       url: `http://localhost:5050/cropMonitoring/api/v1/fields/${fieldCode}`,
       type: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       success: function (response) {
         $("#fieldCode").val(response.fieldCode);
         $("#fieldName").val(response.fieldName);
@@ -135,45 +138,54 @@ $(document).ready(function () {
     $("#crops").append(newOption).trigger("change");
   });
 
-  //save
-  $(document).ready(function () {
-    $("#saveBtn").click(function (e) {
-      e.preventDefault();
-
-      const formData = new FormData();
-      formData.append("fieldCode", $("#fieldCode").val());
-      formData.append("fieldName", $("#fieldName").val());
-      formData.append("fieldLocation", $("#fieldLocation").val());
-      formData.append("extentSize", $("#fieldSize").val());
-      formData.append("fieldImage1", $("#fieldImage1")[0].files[0]);
-      formData.append("fieldImage2", $("#fieldImage2")[0].files[0]);
-
-      $.ajax({
-        url: "http://localhost:5050/cropMonitoring/api/v1/fields",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-          alert("Field saved successfully");
-        },
-        error: function (xhr, status, error) {
-          console.error("Error status:", status);
-          console.error("Error:", error);
-          console.error("Response:", xhr.responseText);
-          alert(
-            "Failed to save field: " +
-              (xhr.responseText || "Unknown error occurred")
-          );
-        },
-      });
+  // save
+  $("#fieldForm").on("submit", function (e) {
+    e.preventDefault();
+  
+    const userRole = localStorage.getItem("role");
+    if (userRole === "ADMINISTRATIVE") {
+      alert("Unauthorized access.");
+      return;
+    }
+  
+    let formData = new FormData(this);
+    formData.append("fieldCode", $("#fieldCode").val());
+    formData.append("fieldName", $("#fieldName").val());
+    formData.append("fieldLocation", $("#fieldLocation").val());
+    formData.append("extentSize", $("#fieldSize").val());
+    formData.append("fieldImage1", $("#fieldImage1")[0].files[0]);
+    formData.append("fieldImage2", $("#fieldImage2")[0].files[0]);
+  
+    $.ajax({
+      url: "http://localhost:5050/cropMonitoring/api/v1/fields/savefield",
+      type: "POST",
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      success: function (response) {
+        alert("Field saved successfully!");
+        $("#fieldForm")[0].reset();
+        $("#previewImage1, #previewImage2").attr("src", "").hide();
+        setFieldCode();
+      },
+      error: function (xhr) {
+        if (xhr.status === 403) {
+          alert("Unauthorized access.");
+          return;
+        }
+        alert("Error saving field: " + (xhr.responseJSON?.message || xhr.responseText));
+      },
     });
   });
-
+  
   //clear
   $("#clearBtn").click(function () {
     $("#fieldForm")[0].reset();
     $("#searchField").val("");
+    $("#previewImage1, #previewImage2").attr("src", "").hide();
     setFieldCode();
   });
 });
@@ -181,7 +193,7 @@ $(document).ready(function () {
 //delete
 $("#deleteBtn").click(function (e) {
   e.preventDefault();
-
+  
   const fieldCode = $("#fieldCode").val();
 
   if (!fieldCode) {
@@ -192,6 +204,9 @@ $("#deleteBtn").click(function (e) {
   $.ajax({
     url: `http://localhost:5050/cropMonitoring/api/v1/fields/${fieldCode}`,
     type: "DELETE",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
     success: function () {
       alert("Field deleted successfully");
       $("#fieldForm")[0].reset();
@@ -210,6 +225,11 @@ $("#deleteBtn").click(function (e) {
 //update
 $("#updateBtn").click(function (e) {
   e.preventDefault();
+  const userRole = localStorage.getItem("role");
+    if (userRole === "ADMINISTRATIVE" || userRole === "SCIENTIST") {
+      alert("Unauthorized access.");
+      return;
+    }
 
   const formData = new FormData();
   formData.append("fieldCode", $("#fieldCode").val());
@@ -247,6 +267,9 @@ $("#updateBtn").click(function (e) {
     data: formData,
     processData: false,
     contentType: false,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
     success: function () {
       alert("Field updated successfully");
     },

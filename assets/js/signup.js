@@ -23,14 +23,16 @@ $("#signinForm").on("submit", function (e) {
     success: function (resp) {
       console.log("Sign-In Response:", resp);
 
-      // Extract tokens
       token = resp.token;
       refreshToken = resp.refreshToken;
+      const userRole = resp.role;
 
-      // Store tokens in localStorage
+      // Store tokens and role in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("role", userRole);
 
+      console.log("Role Stored:", userRole);
       // Verify token storage
       console.log("Token Stored:", localStorage.getItem("token"));
       console.log(
