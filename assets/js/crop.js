@@ -35,7 +35,11 @@ function previewCropImage() {
 
 //load all fields for combo-box
 function loadFields() {
-  fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields")
+  fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
     .then((response) => response.json())
     .then((data) => {
       const fieldSelect = document.getElementById("field");
@@ -49,22 +53,30 @@ function loadFields() {
         fieldSelect.appendChild(option);
       });
     })
-    .catch((error) => console.error("Error loading fields:", error));
+    .catch((error) => {
+      console.error("Error loading fields:", error);
+      alert("Failed to load fields.");
+    });
 }
-
-//save
+// Save Crop
 document.getElementById("saveBtn").addEventListener("click", function (e) {
   e.preventDefault();
 
+  const userRole = localStorage.getItem("role");
+  if (userRole === "ADMINISTRATIVE") {
+    alert("Unauthorized access.");
+    return;
+  }
+
   const formData = new FormData();
-  formData.append("cropCode", document.getElementById("cropCode").value);
+  formData.append("cropCode", document.getElementById("cropCode").value.trim());
   formData.append(
     "cropCommonName",
-    document.getElementById("cropCommonName").value
+    document.getElementById("cropCommonName").value.trim()
   );
   formData.append(
     "cropScientificName",
-    document.getElementById("cropScientificName").value
+    document.getElementById("cropScientificName").value.trim()
   );
   formData.append("category", document.getElementById("cropCategory").value);
   formData.append("cropSeason", document.getElementById("cropSeason").value);
@@ -74,13 +86,24 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
   fetch("http://localhost:5050/cropMonitoring/api/v1/crops", {
     method: "POST",
     body: formData,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   })
-    .then((response) => response.json())
-    .then((data) => {
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to save crop.");
+      }
+      return response.json();
+    })
+    .then(() => {
       alert("Crop saved successfully!");
       clearForm();
     })
-    .catch((error) => console.error("Error:", error));
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("Error saving crop.");
+    });
 });
 
 document.getElementById("clearBtn").addEventListener("click", clearForm);
@@ -93,55 +116,74 @@ function clearForm() {
 }
 
 //search
-document.getElementById("searchBtn").addEventListener("click", function () {
-  searchVehicle();
-});
+document.getElementById("searchBtn").addEventListener("click", searchCrop);
+document
+  .getElementById("searchInput")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchCrop();
+    }
+  });
 
-document.getElementById("searchInput").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    searchVehicle();
-  }
-});
+function searchCrop() {
+  const searchValue = document.getElementById("searchInput").value;
 
-function searchVehicle() {
-  const searchTerm = document.getElementById("searchInput").value.trim();
-
-  fetch(`http://localhost:5050/cropMonitoring/api/v1/vehicles?searchTerm=${searchTerm}`)
+  fetch(
+    `http://localhost:5050/cropMonitoring/api/v1/crops?searchTerm=${searchValue}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  )
     .then((response) => response.json())
-    .then((vehicleData) => {
-      if (vehicleData && vehicleData.length > 0) {
-        fillVehicleForm(vehicleData[0]);
+    .then((data) => {
+      if (data.length > 0) {
+        const crop = data[0];
+        document.getElementById("cropCode").value = crop.cropCode;
+        document.getElementById("cropCommonName").value = crop.cropCommonName;
+        document.getElementById("cropScientificName").value =
+          crop.cropScientificName;
+        document.getElementById("cropCategory").value = crop.category;
+        document.getElementById("cropSeason").value = crop.cropSeason;
+        const fieldSelect = document.getElementById("field");
+        for (let i = 0; i < fieldSelect.options.length; i++) {
+          if (fieldSelect.options[i].value === crop.fieldCode) {
+            fieldSelect.selectedIndex = i;
+            break;
+          }
+        }
+
+        if (crop.cropImage) {
+          const cropImagePreview = document.getElementById("cropImagePreview");
+          cropImagePreview.src = `data:image/png;base64,${crop.cropImage}`;
+          cropImagePreview.style.display = "block";
+        } else {
+          document.getElementById("cropImagePreview").style.display = "none";
+        }
       } else {
-        alert("Vehicle not found");
+        alert("Crop not found.");
       }
     })
     .catch((error) => console.error("Error:", error));
 }
-
-function fillVehicleForm(vehicle) {
-  document.getElementById("vehicleCode").value = vehicle.vehicleCode;
-  document.getElementById("licensePlate").value = vehicle.licensePlateNumber;
-  document.getElementById("vehicleCategory").value = vehicle.vehicleCategory;
-  document.getElementById("fuelType").value = vehicle.fuelType;
-  document.getElementById("status").value = vehicle.status;
-  document.getElementById("remarks").value = vehicle.remarks;
-
-  if (vehicle.staff && vehicle.staff.length > 0) {
-    document.getElementById("staff").value = vehicle.staff[0].staffCode;
-  } else {
-    document.getElementById("staff").value = ""; 
-  }
-}
-
 //delete
 document.getElementById("deleteBtn").addEventListener("click", function (e) {
   e.preventDefault();
+
+  const userRole = localStorage.getItem("role");
+  if (userRole === "ADMINISTRATIVE") {
+    alert("Unauthorized access.");
+    return;
+  }
 
   const cropCode = document.getElementById("cropCode").value;
 
   fetch(`http://localhost:5050/cropMonitoring/api/v1/crops/${cropCode}`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   })
     .then((response) => {
       if (response.ok) {
@@ -157,6 +199,12 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
 //update
 document.getElementById("updateBtn").addEventListener("click", function (e) {
   e.preventDefault();
+
+  const userRole = localStorage.getItem("role");
+  if (userRole === "ADMINISTRATIVE") {
+    alert("Unauthorized access.");
+    return;
+  }
 
   const cropCode = document.getElementById("cropCode").value;
   const formData = new FormData();
@@ -177,6 +225,9 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
   fetch(`http://localhost:5050/cropMonitoring/api/v1/crops/${cropCode}`, {
     method: "PATCH",
     body: formData,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   })
     .then((response) => {
       if (response.ok) {
@@ -193,15 +244,18 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
 $(document).ready(function () {
   $("#getAllBtn").click(function () {
     $.ajax({
-      url: 'http://localhost:5050/cropMonitoring/api/v1/crops/allcrops', 
-      type: 'GET',
+      url: "http://localhost:5050/cropMonitoring/api/v1/crops/allcrops",
+      type: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       success: function (crops) {
-        localStorage.setItem('cropData', JSON.stringify(crops));
+        localStorage.setItem("cropData", JSON.stringify(crops));
         window.location.href = "/pages/crop-list.html";
       },
       error: function (error) {
         console.error("Error fetching crops: ", error);
-      }
+      },
     });
   });
 });

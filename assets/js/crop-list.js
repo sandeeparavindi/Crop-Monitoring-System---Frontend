@@ -2,7 +2,14 @@ $(document).ready(function () {
   let fieldMap = {};
 
   function fetchFields() {
-    return fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields")
+    return fetch(
+      "http://localhost:5050/cropMonitoring/api/v1/fields/allFields",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((fields) => {
         fields.forEach((field) => {
