@@ -26,21 +26,11 @@ $("#signinForm").on("submit", function (e) {
       token = resp.token;
       refreshToken = resp.refreshToken;
       const userRole = resp.role;
-
-      // Store tokens and role in localStorage
       localStorage.setItem("token", token);
-      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("role", userRole);
 
       console.log("Role Stored:", userRole);
-      // Verify token storage
       console.log("Token Stored:", localStorage.getItem("token"));
-      console.log(
-        "Refresh Token Stored:",
-        localStorage.getItem("refreshToken")
-      );
-
-      // Redirect to the desired page
       window.location.href = "pages/sidebar.html";
     },
     error: function (xhr) {
@@ -69,42 +59,16 @@ $("#signupForm").on("submit", function (e) {
     contentType: "application/json",
     success: function (response) {
       console.log("Sign-Up Successful:", response);
-
-      // Save tokens to local storage
       localStorage.setItem("token", response.token);
-      localStorage.setItem("refreshToken", response.refreshToken);
 
-      // Redirect the user to the sidebar or dashboard
       window.location.href = "/index.html";
     },
     error: function (xhr) {
-      // Log the error for debugging
       console.error("Error:", xhr.responseText);
       alert("Sign-Up Failed: " + xhr.responseText);
     },
   });
 });
-
-// Utility to Refresh Token
-function refreshAuthToken() {
-  const currentRefreshToken = localStorage.getItem("refreshToken");
-
-  $.ajax({
-    url: refreshTokenURI,
-    method: "POST",
-    data: JSON.stringify({ refreshToken: currentRefreshToken }),
-    contentType: "application/json",
-    success: function (resp) {
-      // Update tokens
-      token = resp.token;
-      localStorage.setItem("token", token);
-      console.log("Tokens refreshed successfully:", token);
-    },
-    error: function () {
-      console.error("Token refresh failed. Please log in again.");
-    },
-  });
-}
 
 // Get Form Data for Sign In
 function getAllSignInDataFromField() {
