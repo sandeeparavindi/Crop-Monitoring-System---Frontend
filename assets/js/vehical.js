@@ -82,40 +82,52 @@ document.getElementById("searchInput").addEventListener("keypress", function (e)
 function searchVehicle() {
   const searchTerm = document.getElementById("searchInput").value.trim();
 
+  if (!searchTerm) {
+    alert("Please enter a search term.");
+    return;
+  }
+
   fetch(`http://localhost:5050/cropMonitoring/api/v1/vehicles?searchTerm=${encodeURIComponent(searchTerm)}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "application/json",
     },
   })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((response) => {
-      if (response.ok) {
-        return response.text();
-      } else if (response.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
-          window.location.href = "/index.html";
-        }
-        throw new Error("Unauthorized");
-      } else if (response.status === 403) {
-        alert("You do not have permission to perform this action.");
-        throw new Error("Forbidden");
-      } else {
-        return response.text().then((text) => {
-          throw new Error(text || "An unexpected error occurred.");
-        });
-      }
-    })
-    .then((data) => {
-      alert(data);
-    })
-    .catch((error) => console.error("Error:", error));
+//     .then((response) => {
+//       if (!response.ok) {
+//         throw new Error("Failed to fetch vehicle data");
+//       }
+//       return response.json();
+//     })
+//     .then((vehicleData) => {
+//       if (vehicleData && vehicleData.length > 0) {
+//         fillVehicleForm(vehicleData[0]);
+//       }
+//        else {
+//         alert("Vehicle not found.");
+//       }
+//     })
+//     .catch((error) => console.error("Error:", error));
+// }
+.then((response) => {
+  if (response.status === 401) {
+    if (confirm("Session expired. Please log in again.")) {
+      window.location.href = "/index.html";
+    }
+    throw new Error("Unauthorized");
+  } else if (!response.ok) {
+    throw new Error("Failed to fetch vehicle data");
   }
+  return response.json();
+})
+.then((vehicleData) => {
+  if (vehicleData && vehicleData.length > 0) {
+    fillVehicleForm(vehicleData[0]);
+  } else {
+    alert("Vehicle not found.");
+  }
+})
+.catch((error) => console.error("Error:", error));
+}
 
 function fillVehicleForm(vehicle) {
   document.getElementById("vehicleCode").value = vehicle.vehicleCode || "";
@@ -125,8 +137,13 @@ function fillVehicleForm(vehicle) {
   document.getElementById("status").value = vehicle.status || "";
   document.getElementById("remarks").value = vehicle.remarks || "";
 
-  document.getElementById("staff").value = (vehicle.staff && vehicle.staff.length > 0) ? vehicle.staff[0].staffCode : "";
+  if (vehicle.staff && vehicle.staff.length > 0) {
+    document.getElementById("staff").value = vehicle.staff[0].staffCode || "";
+  } else {
+    document.getElementById("staff").value = "";
+  }
 }
+
 
 //update
 document.getElementById("updateBtn").addEventListener("click", function (e) {
@@ -151,8 +168,10 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
   })
   .then((response) => {
     if (response.ok) {
-      return response.text();
-    } else if (response.status === 401) {
+      alert("Vehicle updated successfully!");
+      clearForm();
+    }
+    else if (response.status === 401) {
       if (confirm("Session expired. Please log in again.")) {
         window.location.href = "/index.html";
       }
@@ -160,17 +179,14 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
     } else if (response.status === 403) {
       alert("You do not have permission to perform this action.");
       throw new Error("Forbidden");
-    } else {
-      return response.text().then((text) => {
-        throw new Error(text || "An unexpected error occurred.");
-      });
     }
-  })
-  .then((data) => {
-    alert(data);
+     else {
+      alert("Failed to update the vehicle.");
+    }
   })
   .catch((error) => console.error("Error:", error));
 });
+
 //delte
 document.getElementById("deleteBtn").addEventListener("click", function (e) {
   e.preventDefault();
@@ -185,7 +201,8 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
   })
   .then((response) => {
     if (response.ok) {
-      return response.text();
+      alert("Vehicle deleted successfully!");
+      clearForm();
     } else if (response.status === 401) {
       if (confirm("Session expired. Please log in again.")) {
         window.location.href = "/index.html";
@@ -194,14 +211,10 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
     } else if (response.status === 403) {
       alert("You do not have permission to perform this action.");
       throw new Error("Forbidden");
-    } else {
-      return response.text().then((text) => {
-        throw new Error(text || "An unexpected error occurred.");
-      });
     }
-  })
-  .then((data) => {
-    alert(data);
+    else {
+      alert("Failed to delete the vehicle.");
+    }
   })
   .catch((error) => console.error("Error:", error));
 });
