@@ -2,6 +2,9 @@ $(document).ready(function () {
   $.ajax({
     url: "http://localhost:5050/cropMonitoring/api/v1/fields/allFields",
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
     success: function (data) {
       data.forEach((field, index) => {
         const fieldImage1 = field.fieldImage1

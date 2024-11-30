@@ -141,13 +141,13 @@ $(document).ready(function () {
   // save
   $("#fieldForm").on("submit", function (e) {
     e.preventDefault();
-  
+
     const userRole = localStorage.getItem("role");
     if (userRole === "ADMINISTRATIVE") {
       alert("Unauthorized access.");
       return;
     }
-  
+
     let formData = new FormData(this);
     formData.append("fieldCode", $("#fieldCode").val());
     formData.append("fieldName", $("#fieldName").val());
@@ -155,7 +155,7 @@ $(document).ready(function () {
     formData.append("extentSize", $("#fieldSize").val());
     formData.append("fieldImage1", $("#fieldImage1")[0].files[0]);
     formData.append("fieldImage2", $("#fieldImage2")[0].files[0]);
-  
+
     $.ajax({
       url: "http://localhost:5050/cropMonitoring/api/v1/fields/savefield",
       type: "POST",
@@ -176,11 +176,14 @@ $(document).ready(function () {
           alert("Unauthorized access.");
           return;
         }
-        alert("Error saving field: " + (xhr.responseJSON?.message || xhr.responseText));
+        alert(
+          "Error saving field: " +
+            (xhr.responseJSON?.message || xhr.responseText)
+        );
       },
     });
   });
-  
+
   //clear
   $("#clearBtn").click(function () {
     $("#fieldForm")[0].reset();
@@ -193,7 +196,12 @@ $(document).ready(function () {
 //delete
 $("#deleteBtn").click(function (e) {
   e.preventDefault();
-  
+
+  const userRole = localStorage.getItem("role");
+  if (userRole === "ADMINISTRATIVE") {
+    alert("Unauthorized access.");
+    return;
+  }
   const fieldCode = $("#fieldCode").val();
 
   if (!fieldCode) {
@@ -210,6 +218,7 @@ $("#deleteBtn").click(function (e) {
     success: function () {
       alert("Field deleted successfully");
       $("#fieldForm")[0].reset();
+      $("#previewImage1, #previewImage2").attr("src", "").hide();
       setFieldCode();
     },
     error: function (xhr) {
@@ -226,10 +235,10 @@ $("#deleteBtn").click(function (e) {
 $("#updateBtn").click(function (e) {
   e.preventDefault();
   const userRole = localStorage.getItem("role");
-    if (userRole === "ADMINISTRATIVE" || userRole === "SCIENTIST") {
-      alert("Unauthorized access.");
-      return;
-    }
+  if (userRole === "ADMINISTRATIVE" || userRole === "SCIENTIST") {
+    alert("Unauthorized access.");
+    return;
+  }
 
   const formData = new FormData();
   formData.append("fieldCode", $("#fieldCode").val());
@@ -272,12 +281,17 @@ $("#updateBtn").click(function (e) {
     },
     success: function () {
       alert("Field updated successfully");
+      $("#fieldForm")[0].reset();
+      $("#previewImage1, #previewImage2").attr("src", "").hide();
+      setFieldCode();
     },
     error: function (xhr) {
-      console.error("Error:", xhr.responseText);
+      if (xhr.status === 403) {
+        alert("Unauthorized access.");
+        return;
+      }
       alert(
-        "Failed to update field: " +
-          (xhr.responseText || "Unknown error occurred")
+        "Error update field: " + (xhr.responseJSON?.message || xhr.responseText)
       );
     },
   });
