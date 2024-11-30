@@ -26,8 +26,17 @@ $(document).ready(function () {
           `);
       });
     },
-    error: function (error) {
-      console.error("Error fetching field data:", error);
+    error: function (xhr) {
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else {
+        alert(
+          "Error get fields: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
+      }
     },
   });
 

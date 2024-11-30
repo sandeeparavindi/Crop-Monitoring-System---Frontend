@@ -2,6 +2,9 @@ $(document).ready(function () {
   $.ajax({
     url: "http://localhost:5050/cropMonitoring/api/v1/vehicles/allVehicles",
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
     success: function (vehicles) {
       vehicles.forEach((vehicle, index) => {
         $("#vehicleDetailsTable").append(`
@@ -17,8 +20,17 @@ $(document).ready(function () {
           `);
       });
     },
-    error: function (error) {
-      console.error("Error fetching vehicle data:", error);
+    error: function (xhr) {
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else {
+        alert(
+          "Error get vehicles: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
+      }
     },
   });
 

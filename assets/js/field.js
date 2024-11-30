@@ -58,7 +58,6 @@ $("#clearBtn").click(function (e) {
 
 //search
 $(document).ready(function () {
-  // Function to handle the search functionality
   function performSearch() {
     const fieldCode = $("#searchField").val();
 
@@ -97,11 +96,18 @@ $(document).ready(function () {
         alert("Field found and loaded into the form");
       },
       error: function (xhr) {
-        console.error("Error:", xhr.responseText);
-        alert(
-          "Failed to find field: " +
-            (xhr.responseText || "Unknown error occurred")
-        );
+        if (xhr.status === 401) {
+          if (confirm("Session expired. Please log in again.")) {
+            window.location.href = "/index.html";
+          }
+        } else if (xhr.status === 403) {
+          alert("You do not have permission to perform this action.");
+        } else {
+          alert(
+            "Error saving field: " +
+              (xhr.responseText || "An unexpected error occurred.")
+          );
+        }
       },
     });
   }
@@ -142,12 +148,6 @@ $(document).ready(function () {
   $("#fieldForm").on("submit", function (e) {
     e.preventDefault();
 
-    const userRole = localStorage.getItem("role");
-    if (userRole === "ADMINISTRATIVE") {
-      alert("Unauthorized access.");
-      return;
-    }
-
     let formData = new FormData(this);
     formData.append("fieldCode", $("#fieldCode").val());
     formData.append("fieldName", $("#fieldName").val());
@@ -172,14 +172,18 @@ $(document).ready(function () {
         setFieldCode();
       },
       error: function (xhr) {
-        if (xhr.status === 403) {
-          alert("Unauthorized access.");
-          return;
+        if (xhr.status === 401) {
+          if (confirm("Session expired. Please log in again.")) {
+            window.location.href = "/index.html";
+          }
+        } else if (xhr.status === 403) {
+          alert("You do not have permission to perform this action.");
+        } else {
+          alert(
+            "Error saving field: " +
+              (xhr.responseText || "An unexpected error occurred.")
+          );
         }
-        alert(
-          "Error saving field: " +
-            (xhr.responseJSON?.message || xhr.responseText)
-        );
       },
     });
   });
@@ -196,12 +200,6 @@ $(document).ready(function () {
 //delete
 $("#deleteBtn").click(function (e) {
   e.preventDefault();
-
-  const userRole = localStorage.getItem("role");
-  if (userRole === "ADMINISTRATIVE") {
-    alert("Unauthorized access.");
-    return;
-  }
   const fieldCode = $("#fieldCode").val();
 
   if (!fieldCode) {
@@ -222,11 +220,18 @@ $("#deleteBtn").click(function (e) {
       setFieldCode();
     },
     error: function (xhr) {
-      console.error("Error:", xhr.responseText);
-      alert(
-        "Failed to delete field: " +
-          (xhr.responseText || "Unknown error occurred")
-      );
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else if (xhr.status === 403) {
+        alert("You do not have permission to perform this action.");
+      } else {
+        alert(
+          "Error delete field: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
+      }
     },
   });
 });
@@ -234,12 +239,6 @@ $("#deleteBtn").click(function (e) {
 //update
 $("#updateBtn").click(function (e) {
   e.preventDefault();
-  const userRole = localStorage.getItem("role");
-  if (userRole === "ADMINISTRATIVE" || userRole === "SCIENTIST") {
-    alert("Unauthorized access.");
-    return;
-  }
-
   const formData = new FormData();
   formData.append("fieldCode", $("#fieldCode").val());
 
@@ -286,13 +285,18 @@ $("#updateBtn").click(function (e) {
       setFieldCode();
     },
     error: function (xhr) {
-      if (xhr.status === 403) {
-        alert("Unauthorized access.");
-        return;
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else if (xhr.status === 403) {
+        alert("You do not have permission to perform this action.");
+      } else {
+        alert(
+          "Error updated field: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
       }
-      alert(
-        "Error update field: " + (xhr.responseJSON?.message || xhr.responseText)
-      );
     },
   });
 });
