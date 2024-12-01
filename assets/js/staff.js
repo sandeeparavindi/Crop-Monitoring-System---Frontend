@@ -31,12 +31,17 @@ $(document).ready(function () {
     success: function (data) {
       const vehicleSelect = $("#allocatedVehicles");
       data.forEach((vehicle) => {
-        vehicleSelect.append(
-          new Option(
-            `${vehicle.vehicleCode} - ${vehicle.vehicleCategory}`,
-            vehicle.vehicleCode
-          )
-        );
+        if (
+          vehicle.status &&
+          (vehicle.status.toLowerCase() === "available")
+        ) {
+          vehicleSelect.append(
+            new Option(
+              `${vehicle.vehicleCode} - ${vehicle.vehicleCategory}`,
+              vehicle.vehicleCode
+            )
+          );
+        }
       });
     },
     error: function (xhr) {
@@ -46,7 +51,7 @@ $(document).ready(function () {
         }
       } else {
         alert(
-          "Error load vehicle code: " +
+          "Error loading vehicle codes: " +
             (xhr.responseText || "An unexpected error occurred.")
         );
       }
