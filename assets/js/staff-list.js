@@ -3,7 +3,11 @@ $(document).ready(function () {
 
   function fetchVehicles() {
     return fetch(
-      "http://localhost:5050/cropMonitoring/api/v1/vehicles/allVehicles"
+      "http://localhost:5050/cropMonitoring/api/v1/vehicles/allVehicles",{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((vehicles) => {
@@ -22,6 +26,9 @@ $(document).ready(function () {
     $.ajax({
       url: "http://localhost:5050/cropMonitoring/api/v1/staff/allstaff",
       method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       success: function (data) {
         console.log("Fetched Staff Data:", data);
         populateStaffTables(data);
@@ -105,6 +112,8 @@ $(document).ready(function () {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+
         },
       });
 
