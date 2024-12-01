@@ -98,6 +98,7 @@ $("#saveBtn").on("click", function (event) {
       alert("Staff member saved successfully.");
       $("#staffForm")[0].reset();
       generateStaffId();
+      setStaffId();
     },
     error: function (xhr) {
       if (xhr.status === 401) {
@@ -223,6 +224,8 @@ $("#updateBtn").on("click", function (event) {
     success: function () {
       alert("Staff member updated successfully.");
       clearForm();
+      generateStaffId();
+      setStaffId();
     },
     error: function (xhr) {
       if (xhr.status === 401) {
@@ -262,6 +265,7 @@ $("#deleteBtn").on("click", function (event) {
         alert("Staff member deleted successfully.");
         $("#staffForm")[0].reset();
         generateStaffId();
+        setStaffId();
       },
       error: function (xhr) {
         if (xhr.status === 401) {

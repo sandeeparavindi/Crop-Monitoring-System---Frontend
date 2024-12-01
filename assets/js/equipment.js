@@ -16,8 +16,17 @@ window.onload = function () {
 };
 
 function loadFields() {
-  fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields")
-    .then((response) => response.json())
+  fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then((data) => {
       const fieldSelect = document.getElementById("assignedField");
       fieldSelect.innerHTML =
@@ -34,8 +43,17 @@ function loadFields() {
 }
 
 function loadStaffs() {
-  fetch("http://localhost:5050/cropMonitoring/api/v1/staff/allstaff")
-    .then((response) => response.json())
+  fetch("http://localhost:5050/cropMonitoring/api/v1/staff/allstaff", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then((data) => {
       const staffSelect = document.getElementById("assignedStaff");
       staffSelect.innerHTML =
@@ -66,23 +84,38 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
 
   fetch("http://localhost:5050/cropMonitoring/api/v1/equipment", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
     body: JSON.stringify(equipmenteData),
   })
     .then((response) => {
       if (response.ok) {
         return response.text();
+      } else if (response.status === 401) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "/index.html";
+        return Promise.reject("Unauthorized: Session expired.");
+      } else if (response.status === 403) {
+        alert("You do not have permission to perform this action.");
+        return Promise.reject("Forbidden: Access denied.");
       } else {
-        throw new Error("Failed to save vehicle data.");
+        return Promise.reject("Failed to save equipment data.");
       }
     })
     .then((data) => {
-      alert("Success save equipment" + data);
+      alert("Equipment saved successfully: " + data);
       clearForm();
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("Error: " + error.message);
+      if (
+        error !== "Unauthorized: Session expired." &&
+        error !== "Forbidden: Access denied."
+      ) {
+        alert("Error: " + error);
+      }
     });
 });
 
@@ -97,6 +130,10 @@ function searchEquipment() {
   $.ajax({
     type: "GET",
     url: `http://localhost:5050/cropMonitoring/api/v1/equipment?searchTerm=${searchTerm}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
     success: function (data) {
       if (data && data.length > 0) {
         populateEquipmentForm(data[0]);
@@ -104,8 +141,19 @@ function searchEquipment() {
         alert("No equipment found with the provided ID or Name.");
       }
     },
-    error: function () {
-      alert("An error occurred while searching. Please try again.");
+    error: function (xhr) {
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else if (xhr.status === 403) {
+        alert("You do not have permission to perform this action.");
+      } else {
+        alert(
+          "Error Search equipment: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
+      }
     },
   });
 }
@@ -137,72 +185,112 @@ $("#clearBtn").click(clearForm);
 
 // Update
 $("#updateBtn").on("click", function (event) {
-    event.preventDefault();
-  
-    const equipmentId = $("#equipmentId").val();
-    const equipmentData = {
-        equipmentName: $("#equipmentName").val(),
-        equipmentType: $("#equipmentType").val(),
-        equipmentStatus: $("#status").val(),
-        fieldCode: $("#assignedField").val(),
-        id: $("#assignedStaff").val(),
-    };
-  
-    $.ajax({
-       url: `http://localhost:5050/cropMonitoring/api/v1/equipment/${equipmentId}`,
-       method: "PATCH",
-       contentType: "application/json",
-       data: JSON.stringify(equipmentData),
-       success: function () {
-          alert("Equipment updated successfully.");
-          clearForm(); 
-       },
-       error: function (xhr) {
-          console.error("Error updating equipment:", xhr.responseText);
-          alert("Failed to update equipment. Please try again.");
-       }
-    });
+  event.preventDefault();
+
+  const equipmentId = $("#equipmentId").val();
+  const equipmentData = {
+    equipmentName: $("#equipmentName").val(),
+    equipmentType: $("#equipmentType").val(),
+    equipmentStatus: $("#status").val(),
+    fieldCode: $("#assignedField").val(),
+    id: $("#assignedStaff").val(),
+  };
+
+  $.ajax({
+    url: `http://localhost:5050/cropMonitoring/api/v1/equipment/${equipmentId}`,
+    method: "PATCH",
+    contentType: "application/json",
+    data: JSON.stringify(equipmentData),
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    success: function () {
+      alert("Equipment updated successfully.");
+      clearForm();
+    },
+    error: function (xhr) {
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else if (xhr.status === 403) {
+        alert("You do not have permission to perform this action.");
+      } else {
+        alert(
+          "Error update equipment: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
+      }
+    },
   });
+});
 
 // Delete Equipment
 $("#deleteBtn").on("click", function (event) {
-    event.preventDefault();
-    const equipmentId = $("#equipmentId").val();
-  
-    if (!equipmentId) {
-      alert("Please select equipment to delete.");
-      return;
-    }
-  
-    if (confirm("Are you sure you want to delete this equipment?")) {
-      $.ajax({
-        url: `http://localhost:5050/cropMonitoring/api/v1/equipment/${equipmentId}`,
-        method: "DELETE",
-        success: function () {
-          alert("Equipment deleted successfully.");
-          clearForm();
-        },
-        error: function () {
-          alert("Failed to delete equipment. Please try again.");
-        }
-      });
-    }
-  });
+  event.preventDefault();
+  const equipmentId = $("#equipmentId").val();
 
-  //get all
-  $(document).ready(function () {
-    $('#getAllBtn').click(function () {
-      $.ajax({
-        url: 'http://localhost:5050/cropMonitoring/api/v1/equipment/allEquipment', 
-        method: 'GET',
-        success: function (response) {
-          sessionStorage.setItem('equipmentData', JSON.stringify(response));
-          window.location.href = '/pages/equipment-list.html';
-        },
-        error: function (error) {
-          console.error('Error fetching equipment data:', error);
+  if (!equipmentId) {
+    alert("Please select equipment to delete.");
+    return;
+  }
+
+  if (confirm("Are you sure you want to delete this equipment?")) {
+    $.ajax({
+      url: `http://localhost:5050/cropMonitoring/api/v1/equipment/${equipmentId}`,
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      success: function () {
+        alert("Equipment deleted successfully.");
+        clearForm();
+      },
+      error: function (xhr) {
+        if (xhr.status === 401) {
+          if (confirm("Session expired. Please log in again.")) {
+            window.location.href = "/index.html";
+          }
+        } else if (xhr.status === 403) {
+          alert("You do not have permission to perform this action.");
+        } else {
+          alert(
+            "Error delete equipment: " +
+              (xhr.responseText || "An unexpected error occurred.")
+          );
         }
-      });
+      },
+    });
+  }
+});
+
+//get all
+$(document).ready(function () {
+  $("#getAllBtn").click(function () {
+    $.ajax({
+      url: "http://localhost:5050/cropMonitoring/api/v1/equipment/allEquipment",
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      success: function (response) {
+        sessionStorage.setItem("equipmentData", JSON.stringify(response));
+        window.location.href = "/pages/equipment-list.html";
+      },
+      error: function (xhr) {
+        if (xhr.status === 401) {
+          if (confirm("Session expired. Please log in again.")) {
+            window.location.href = "/index.html";
+          }
+        } else if (xhr.status === 403) {
+          alert("You do not have permission to perform this action.");
+        } else {
+          alert(
+            "Error update equipment: " +
+              (xhr.responseText || "An unexpected error occurred.")
+          );
+        }
+      },
     });
   });
-  
+});
