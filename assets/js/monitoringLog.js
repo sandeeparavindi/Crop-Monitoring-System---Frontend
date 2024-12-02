@@ -159,3 +159,61 @@ $("#monitoringLogForm").on("submit", function (e) {
     },
   });
 });
+
+// search
+$("#searchBtn").on("click", searchAndFillLogForm);
+$("#searchLog").on("keypress", function (e) {
+  if (e.which === 13) searchAndFillLogForm();
+});
+
+function searchAndFillLogForm() {
+  const searchTerm = $("#searchLog").val().trim();
+  if (searchTerm === "") {
+    alert("Enter a Log Code or Observation.");
+    return;
+  }
+
+  $.ajax({
+    url: `http://localhost:5050/cropMonitoring/api/v1/monitoringLog?searchTerm=${encodeURIComponent(searchTerm)}`,
+    type: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    success: function (logs) {
+      if (logs.length === 0) {
+        alert("No matching log found.");
+        return;
+      }
+
+      // Assuming we take the first matching log
+      const log = logs[0];
+
+      $("#logCode").val(log.log_code);
+      $("#logDate").val(log.log_date);
+      $("#observation").val(log.observation);
+      $("#field").val(log.fieldCode).change();
+      $("#crop").val(log.cropCode).change();
+      $("#staff").val(log.id).change();
+
+      if (log.log_image) {
+        $("#previewImage")
+          .attr("src", `data:image/png;base64,${log.log_image}`)
+          .show();
+      } else {
+        $("#previewImage").hide();
+      }
+    },
+    error: function (xhr) {
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else {
+        alert(
+          "Error retrieving monitoring log: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
+      }
+    },
+  });
+}
