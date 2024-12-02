@@ -46,8 +46,8 @@ function loadFieldsToDropdown() {
       fields.forEach((field) => {
         $("#field").append(
           new Option(
-            `${field.fieldCode} - ${field.fieldName}`, // Option text
-            field.fieldCode // Option value
+            `${field.fieldCode} - ${field.fieldName}`,
+            field.fieldCode 
           )
         );
       });
@@ -58,7 +58,6 @@ function loadFieldsToDropdown() {
   });
 }
 
-// Load all staff into dropdown
 function loadStaffToDropdown() {
   $.ajax({
     url: "http://localhost:5050/cropMonitoring/api/v1/staff/allstaff",
@@ -67,6 +66,8 @@ function loadStaffToDropdown() {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     success: function (staffList) {
+      console.log(staffList);
+
       $("#staff")
         .empty()
         .append(
@@ -75,10 +76,9 @@ function loadStaffToDropdown() {
 
       staffList.forEach((staff) => {
         $("#staff").append(
-          new Option(
-            `${staff.id} - ${staff.firstName}`, 
-            staff.id 
-          )
+          `<option value="${staff.id}" data-role="${staff.role}">
+              ${staff.id} - ${staff.firstName}
+            </option>`
         );
       });
     },
@@ -87,6 +87,17 @@ function loadStaffToDropdown() {
     },
   });
 }
+
+$("#staff").on("change", function () {
+  const selectedOption = $(this).find(":selected");
+  const role = selectedOption.data("role");
+
+  if (role) {
+    $("#role").val(role);
+  } else {
+    $("#role").val("");
+  }
+});
 
 //save
 $("#saveAssignment").on("click", function () {
@@ -109,10 +120,10 @@ $("#saveAssignment").on("click", function () {
   $.ajax({
     url: "http://localhost:5050/cropMonitoring/api/v1/assignment/save",
     type: "POST",
-    contentType: "application/json", 
-    data: JSON.stringify(data), 
+    contentType: "application/json",
+    data: JSON.stringify(data),
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`, 
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     success: function (response) {
       alert("Assignment saved successfully!");

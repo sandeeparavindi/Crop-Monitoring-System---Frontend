@@ -50,7 +50,9 @@
     </div>
     <div id="sidebar-container"></div>
     <div class="container mt-4">
-      <h2 class="text-left mb-3" style="margin-top: 100px">Field Staff Assignment</h2>
+      <h2 class="text-left mb-3" style="margin-top: 100px">
+        Field Staff Assignment
+      </h2>
       <button type="button" class="btn btn-info" id="addAssignment">
         + Add Assignment
       </button>
@@ -61,15 +63,6 @@
         <div class="p-3">
           <h5 class="text-center">Staff Assignment</h5>
           <form id="assignmentStaffForm">
-            <!-- <div class="mb-3">
-              <label for="assignmentId" class="form-label">Assignment ID</label>
-              <input
-                type="text"
-                class="form-control"
-                id="assignmentId"
-                readonly
-              />
-            </div> -->
             <div class="mb-3">
               <label for="field" class="form-label">Allocated Field</label>
               <select class="form-select" id="field" required>
@@ -77,20 +70,16 @@
               </select>
             </div>
             <div class="mb-3">
-              <label for="staff" class="form-label">Allocated Staff Member</label>
-            <select class="form-select" id="staff" required>
-              <option value="" disabled selected>Select Saff Member</option>
-            </select>
+              <label for="staff" class="form-label"
+                >Allocated Staff Member</label
+              >
+              <select class="form-select" id="staff" required>
+                <option value="" disabled selected>Select Saff Member</option>
+              </select>
             </div>
             <div class="mb-3">
               <label for="role" class="form-label">Role</label>
-            <select class="form-select" id="role" required>
-              <option value="" disabled selected>Select Role</option>
-              <option value="Manager">Manager</option>
-              <option value="Administrative">Administrative</option>
-              <option value="Scientist">Scientist</option>
-              <option value="Other">Other</option>
-            </select>
+              <input type="text" id="role" name="role" readonly />
             </div>
             <div class="mb-3">
               <label for="assignmentDate" class="form-label"
@@ -104,7 +93,9 @@
               />
             </div>
             <div class="text-center">
-              <button type="submit" class="btn btn-success" id="saveAssignment">Save</button>
+              <button type="submit" class="btn btn-success" id="saveAssignment">
+                Save
+              </button>
               <button type="button" class="btn btn-secondary" id="closeModal">
                 Close
               </button>
@@ -128,15 +119,15 @@
       </div>
     </div>
     <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-  <script src="/assets/js/loader.js"></script>
-  <script src="/assets/js/sidebarControl.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <script src="/assets/js/fieldAssignSatff.js"></script>
-  <script src="/assets/js/signup.js"></script>
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="/assets/js/loader.js"></script>
+    <script src="/assets/js/sidebarControl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="/assets/js/fieldAssignSatff.js"></script>
+    <script src="/assets/js/signup.js"></script>
   </body>
 </html>
