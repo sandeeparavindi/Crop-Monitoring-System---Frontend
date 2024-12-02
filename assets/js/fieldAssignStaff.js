@@ -5,7 +5,11 @@ document.getElementById("addAssignment").addEventListener("click", () => {
       .toISOString()
       .split("T")[0];
   });
-  
+
+  $(document).ready(function () {
+    loadAssignments();
+  });
+    
   document.getElementById("closeModal").addEventListener("click", () => {
     modal.style.display = "none";
     modalOverlay.style.display = "none";
@@ -24,6 +28,7 @@ document.getElementById("addAssignment").addEventListener("click", () => {
   
     loadStaffToDropdown();
     loadFieldsToDropdown();
+    loadAssignments();
   });
   
   document.getElementById("closeModal").addEventListener("click", () => {
@@ -156,4 +161,40 @@ document.getElementById("addAssignment").addEventListener("click", () => {
   $("#backBtn").click(function () {
     window.location.href = "/pages/field.html";
   });
+ 
+  //get all
+  function loadAssignments() {
+    $.ajax({
+      url: "http://localhost:5050/cropMonitoring/api/v1/assignment/allassignments",
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      success: function (assignments) {
+        $("#assignmentTableBody").empty();
+  
+        assignments.forEach((assignment) => {
+          $("#assignmentTableBody").append(`
+            <tr>
+              <td>${assignment.fieldCode}</td>
+              <td>${assignment.staffId}</td>
+              <td>${assignment.assignedRole}</td>
+              <td>${assignment.assignmentDate}</td>
+            </tr>
+          `);
+        });
+      },
+      error: function (xhr) {
+        if (xhr.status === 401) {
+          if (confirm("Session expired. Please log in again.")) {
+            window.location.href = "/index.html";
+          }
+        } else if (xhr.status === 403) {
+          alert("You do not have permission to view assignments.");
+        } else {
+          console.error("Failed to load assignments:", xhr.responseText);
+        }
+      },
+    });
+  }
   
