@@ -185,6 +185,12 @@ function populateStaffForm(staff) {
   $("#address5").val(staff.addressLine05);
   $("#role").val(staff.role);
   $("#allocatedVehicles").val(staff.vehicleCode);
+
+  if (staff.vehicleCode === null || staff.vehicleCode.trim() === "") {
+    $("#allocatedVehicles").val("not-allocated").change();
+  } else {
+    $("#allocatedVehicles").val(staff.vehicleCode).change();
+  }
 }
 
 //clear

@@ -22,12 +22,15 @@ $(document).ready(function () {
     )
       .then((response) => response.json())
       .then((vehicles) => {
+        vehicleMap = {};
+        
         vehicles.forEach((vehicle) => {
           vehicleMap[vehicle.vehicleCode.trim()] = vehicle.vehicleCategory;
         });
       })
       .catch((error) => console.error("Error fetching vehicles:", error));
   }
+  
 
   function fetchAndDisplayStaff() {
     $.ajax({
@@ -107,16 +110,25 @@ $(document).ready(function () {
       additionalDetailsTable.append(additionalRow);
     });
 
-    // Attach event to Remove buttons
     $(".remove-btn").click(function () {
       const staffId = $(this).data("staff-id");
+      const vehicleCode = $(this).data("vehicle-code");
+    
       returnVehicle(staffId);
+    
+      const row = $(this).closest("tr");  
+      const vehicleCell = row.find("td").last();  
+      vehicleCell.html("Not Allocated");
+    
+      sessionRemovedVehicles.add(staffId);
+      saveRemovedVehiclesToLocalStorage();
     });
+    
   }
 
   function returnVehicle(staffId) {
     const url = `http://localhost:5050/cropMonitoring/api/v1/staff/${staffId}/return-vehicle`;
-
+  
     fetch(url, {
       method: "PATCH",
       headers: {
@@ -127,15 +139,17 @@ $(document).ready(function () {
       .then((response) => {
         if (response.status === 204) {
           alert("Vehicle status updated to available.");
-
-          // Add staff ID to session tracking set
+  
           sessionRemovedVehicles.add(staffId);
           saveRemovedVehiclesToLocalStorage();
-
-          // Update the table dynamically
+  
+          fetchVehicles().then(() => {
+            fetchAndDisplayStaff();  
+          });
+  
           const button = $(`button[data-staff-id="${staffId}"]`);
           const vehicleCell = button.closest("td");
-          vehicleCell.html("Not Allocated");
+          vehicleCell.html("Not Allocated"); 
         } else if (response.status === 404) {
           alert("Staff or vehicle not found.");
         } else {
@@ -147,7 +161,7 @@ $(document).ready(function () {
         alert("Failed to update vehicle status. Check the console for details.");
       });
   }
-
+  
   fetchVehicles().then(() => {
     fetchAndDisplayStaff();
   });
