@@ -185,7 +185,6 @@ function searchAndFillLogForm() {
         return;
       }
 
-      // Assuming we take the first matching log
       const log = logs[0];
 
       $("#logCode").val(log.log_code);
@@ -217,3 +216,57 @@ function searchAndFillLogForm() {
     },
   });
 }
+
+// Update
+$("#updateBtn").on("click", function () {
+    const logCode = $("#logCode").val().trim();
+  
+    if (!logCode) {
+      alert("Please search and select a log to update.");
+      return;
+    }
+  
+    let formData = new FormData();
+    formData.append("logDate", $("#logDate").val());
+    formData.append("observation", $("#observation").val());
+    formData.append("fieldCode", $("#field").val());
+    formData.append("cropCode", $("#crop").val());
+    formData.append("staffId", $("#staff").val());
+    
+    const logImageFile = $("#logImage")[0].files[0];
+    if (logImageFile) {
+      formData.append("logImage", logImageFile);
+    }
+  
+    $.ajax({
+      url: `http://localhost:5050/cropMonitoring/api/v1/monitoringLog/${logCode}`,
+      type: "PATCH",
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      success: function () {
+        alert("Monitoring log updated successfully!");
+        $("#monitoringLogForm")[0].reset();
+        $("#previewImage").attr("src", "").hide();
+        setLogCode();
+      },
+      error: function (xhr) {
+        if (xhr.status === 401) {
+          if (confirm("Session expired. Please log in again.")) {
+            window.location.href = "/index.html";
+          }
+        } else if (xhr.status === 403) {
+          alert("You do not have permission to perform this action.");
+        } else {
+          alert(
+            "Error updating monitoring log: " +
+              (xhr.responseText || "An unexpected error occurred.")
+          );
+        }
+      },
+    });
+  });
+  
