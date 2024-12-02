@@ -114,3 +114,48 @@ window.onload = function () {
   loadCrops();
   loadStaff();
 };
+
+//save
+$("#monitoringLogForm").on("submit", function (e) {
+  e.preventDefault();
+
+  let formData = new FormData(this);
+  formData.append("logCode", $("#logCode").val());
+  formData.append("logDate", $("#logDate").val());
+  formData.append("observation", $("#observation").val());
+  formData.append("staffId", $("#staff").val());
+  formData.append("fieldCode", $("#field").val());
+  formData.append("cropCode", $("#crop").val());
+  formData.append("logImage", $("#logImage")[0].files[0]);
+
+  $.ajax({
+    url: "http://localhost:5050/cropMonitoring/api/v1/monitoringLog",
+    type: "POST",
+    data: formData,
+    contentType: false,
+    processData: false,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    success: function (response) {
+      alert("Monitoring Log saved successfully!");
+      $("#monitoringLogForm")[0].reset();
+      $("#previewImage").attr("src", "").hide();
+      setLogCode();
+    },
+    error: function (xhr) {
+      if (xhr.status === 401) {
+        if (confirm("Session expired. Please log in again.")) {
+          window.location.href = "/index.html";
+        }
+      } else if (xhr.status === 403) {
+        alert("You do not have permission to perform this action.");
+      } else {
+        alert(
+          "Error saving log: " +
+            (xhr.responseText || "An unexpected error occurred.")
+        );
+      }
+    },
+  });
+});
