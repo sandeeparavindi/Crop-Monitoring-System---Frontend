@@ -308,6 +308,12 @@ $(document).ready(function () {
   });
 });
 
+$(document).ready(function () {
+  $("#staffAssign").click(function () {
+    window.location.href = "fieldAssignStaff.html";
+  });
+});
+
 //open and close modal
 document.getElementById("addStaff").addEventListener("click", function () {
   document.getElementById("modalOverlay").style.display = "block";
