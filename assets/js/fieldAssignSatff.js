@@ -137,9 +137,18 @@ $("#saveAssignment").on("click", function () {
       loadStaffToDropdown();
     },
     error: function (xhr) {
-      let message =
-        xhr.responseJSON?.message || xhr.responseText || "An error occurred.";
-      alert(`Error saving assignment: ${message}`);
-    },
+        if (xhr.status === 401) {
+          if (confirm("Session expired. Please log in again.")) {
+            window.location.href = "/index.html";
+          }
+        } else if (xhr.status === 403) {
+          alert("You do not have permission to perform this action.");
+        } else {
+          alert(
+            "Error add staff membet to field: " +
+              (xhr.responseText || "An unexpected error occurred.")
+          );
+        }
+      },
   });
 });
