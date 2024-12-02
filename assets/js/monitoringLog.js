@@ -310,4 +310,9 @@ $("#deleteBtn").on("click", function () {
     }
   });
   
-  
+  //getall
+$(document).ready(function () {
+    $("#getAllBtn").click(function () {
+      window.location.href = "monitoringLog-list.html";
+    });
+  });
