@@ -60,17 +60,17 @@ $(document).ready(function () {
   function populateStaffTables(staffData) {
     const basicDetailsTable = $("#staffBasicDetailsTable");
     const additionalDetailsTable = $("#staffAdditionalDetailsTable");
-
+  
     basicDetailsTable.empty();
     additionalDetailsTable.empty();
-
+  
     staffData.forEach((staff, index) => {
       const vehicleCategory =
         vehicleMap[staff.vehicleCode?.trim()] || "Unknown Category";
-
-      // Check if the vehicle is removed
+  
       const isVehicleRemoved = sessionRemovedVehicles.has(staff.id);
-
+      const isReturned = !staff.vehicleCode; 
+  
       const basicRow = `
         <tr>
           <td>${index + 1}</td>
@@ -84,48 +84,61 @@ $(document).ready(function () {
           <td>${staff.role}</td>
         </tr>`;
       basicDetailsTable.append(basicRow);
-
+  
       const additionalRow = `
         <tr>
           <td>${index + 1}</td>
-          <td>${staff.addressLine01}</td>
-          <td>${staff.addressLine02}</td>
-          <td>${staff.addressLine03}</td>
-          <td>${staff.addressLine04}</td>
-          <td>${staff.addressLine05}</td>
+          <td>${staff.addressLine01 || "N/A"}</td>
+          <td>${staff.addressLine02 || "N/A"}</td>
+          <td>${staff.addressLine03 || "N/A"}</td>
+          <td>${staff.addressLine04 || "N/A"}</td>
+          <td>${staff.addressLine05 || "N/A"}</td>
           <td>${staff.contactNo}</td>
           <td>${staff.email}</td>
-          <td>${staff.vehicleCode} - ${vehicleCategory}
-           ${
-             isVehicleRemoved
-               ? "Not Allocated"
-               : `<button class="btn btn-danger btn-sm float-end ms-2 remove-btn" 
-                  data-staff-id="${staff.id}" 
-                  data-vehicle-code="${staff.vehicleCode}">
-                  Remove
-                </button>`
-           }
+          <td>
+            ${
+              staff.vehicleCode
+                ? `${staff.vehicleCode} - ${vehicleCategory}
+                    ${
+                      !isReturned
+                        ? `<button class="btn btn-sm btn-danger return-btn" 
+                            data-staff-id="${staff.id}" 
+                            data-vehicle-code="${staff.vehicleCode}">
+                            Return
+                          </button>`
+                        : ""
+                    }`
+                : "Not Allocated"
+            }
           </td>
         </tr>`;
       additionalDetailsTable.append(additionalRow);
     });
-
+  
     $(".remove-btn").click(function () {
       const staffId = $(this).data("staff-id");
-      const vehicleCode = $(this).data("vehicle-code");
-    
       returnVehicle(staffId);
-    
-      const row = $(this).closest("tr");  
-      const vehicleCell = row.find("td").last();  
+  
+      const row = $(this).closest("tr");
+      const vehicleCell = row.find("td").last();
       vehicleCell.html("Not Allocated");
-    
+  
       sessionRemovedVehicles.add(staffId);
       saveRemovedVehiclesToLocalStorage();
     });
-    
+  
+    $(".return-btn").click(function () {
+      const staffId = $(this).data("staff-id");
+      const vehicleCode = $(this).data("vehicle-code");
+  
+      returnVehicle(staffId);
+  
+      const row = $(this).closest("tr");
+      const vehicleCell = row.find("td").last();
+      vehicleCell.html("Not Allocated");
+    });
   }
-
+  
   function returnVehicle(staffId) {
     const url = `http://localhost:5050/cropMonitoring/api/v1/staff/${staffId}/return-vehicle`;
   
