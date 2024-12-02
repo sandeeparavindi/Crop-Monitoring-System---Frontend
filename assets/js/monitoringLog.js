@@ -269,4 +269,45 @@ $("#updateBtn").on("click", function () {
       },
     });
   });
+
+//   delete
+$("#deleteBtn").on("click", function () {
+    const logCode = $("#logCode").val().trim();
+  
+    if (!logCode) {
+      alert("Please search and select a log to delete.");
+      return;
+    }
+  
+    if (confirm("Are you sure you want to delete this log?")) {
+      $.ajax({
+        url: `http://localhost:5050/cropMonitoring/api/v1/monitoringLog/${logCode}`,
+        type: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        success: function () {
+          alert("Monitoring log deleted successfully!");
+          $("#monitoringLogForm")[0].reset(); 
+          $("#previewImage").attr("src", "").hide(); 
+          setLogCode(); 
+        },
+        error: function (xhr) {
+          if (xhr.status === 401) {
+            if (confirm("Session expired. Please log in again.")) {
+              window.location.href = "/index.html";
+            }
+          } else if (xhr.status === 403) {
+            alert("You do not have permission to perform this action.");
+          } else {
+            alert(
+              "Error deleting monitoring log: " +
+                (xhr.responseText || "An unexpected error occurred.")
+            );
+          }
+        },
+      });
+    }
+  });
+  
   
