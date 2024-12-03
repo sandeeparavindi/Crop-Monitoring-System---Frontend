@@ -1,3 +1,18 @@
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 $(document).ready(function () {
   let fieldMap = {};
 
@@ -7,33 +22,33 @@ $(document).ready(function () {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else if (response.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
-            window.location.href = "/index.html";
-          }
-          throw new Error("Unauthorized access");
-        } else if (response.status === 403) {
-          alert("You do not have permission to view these fields.");
-          throw new Error("Forbidden access");
-        } else {
-          return response.text().then((text) => {
-            throw new Error(text || "An unexpected error occurred.");
-          });
-        }
-      })
-      .then((fields) => {
-        fields.forEach((field) => {
-          fieldMap[field.fieldCode] = field.fieldName;
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else if (response.status === 401) {
+        showPopup("error", "Unauthorized Access", "Session expired. Please log in again.", () => {
+          window.location.href = "/index.html";
         });
-      })
-      .catch((error) => {
-        console.error("Error fetching fields:", error);
-        alert(error.message);
+        throw new Error("Unauthorized access");
+      } else if (response.status === 403) {
+        showPopup("error", "Forbidden Access", "You do not have permission to view these fields.");
+        throw new Error("Forbidden access");
+      } else {
+        return response.text().then((text) => {
+          throw new Error(text || "An unexpected error occurred.");
+        });
+      }
+    })
+    .then((fields) => {
+      fields.forEach((field) => {
+        fieldMap[field.fieldCode] = field.fieldName;
       });
-  }
+    })
+    .catch((error) => {
+      console.error("Error fetching fields:", error);
+      showPopup("error", "Error", error.message);
+    });
+}
 
   function displayCrops() {
     const crops = JSON.parse(localStorage.getItem("cropData"));
@@ -60,7 +75,15 @@ $(document).ready(function () {
         `;
       });
 
-      $("#cropDetailsTable").html(tableRows);
+      $("#cropDetailsTable tbody").html(tableRows);
+
+      // Initialize DataTable
+      $("#cropDetailsTable").DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        responsive: true,
+      });
     }
   }
 
