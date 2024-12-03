@@ -289,7 +289,11 @@ function searchCrop() {
           document.getElementById("cropImagePreview").style.display = "none";
         }
       } else {
-        alert("Crop not found.");
+        Swal.fire({
+          icon: "error",
+          title: "Not Found!",
+          text: "Crop is not Found!",
+        });
       }
     })
     .catch((error) => console.error("Error:", error));
@@ -301,7 +305,11 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
 
   const userRole = localStorage.getItem("role");
   if (userRole === "ADMINISTRATIVE") {
-    alert("Unauthorized access.");
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "You do not have permission to perform this action.",
+    });
     return;
   }
   const cropCode = document.getElementById("cropCode").value;
@@ -314,18 +322,33 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
   })
     .then((response) => {
       if (response.ok) {
-        alert("Crop deleted successfully!");
+        Swal.fire(
+          "Delete Successfully!",
+          "Crop has been deleted successfully.",
+          "success"
+        );
         clearForm();
       } else if (response.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
+        Swal.fire({
+          icon: "warning",
+          title: "Session Expired",
+          text: "Please log in again.",
+          confirmButtonText: "Log In",
+        }).then(() => {
           window.location.href = "/index.html";
-        }
+        });
         throw new Error("Unauthorized");
       } else if (response.status === 403) {
-        alert("You do not have permission to perform this action.");
+        Swal.fire({
+          icon: "error",
+          title: "Forbidden",
+          text: "You do not have permission to perform this action.",
+        });
         throw new Error("Forbidden");
       } else {
-        alert("Failed to delete the crop.");
+        return response.text().then((text) => {
+          throw new Error(text || "An unexpected error occurred.");
+        });
       }
     })
     .catch((error) => console.error("Error:", error));
