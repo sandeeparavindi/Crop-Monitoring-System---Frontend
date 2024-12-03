@@ -1,3 +1,18 @@
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 $(document).ready(function () {
   let fieldMap = {};
   let cropMap = {};
@@ -16,12 +31,12 @@ $(document).ready(function () {
         if (response.ok) {
           return response.json();
         } else if (response.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
+          showPopup("error", "Unauthorized Access", `Session expired. Please log in again to access ${resource}.`, () => {
             window.location.href = "/index.html";
-          }
+          });
           throw new Error("Unauthorized access");
         } else if (response.status === 403) {
-          alert("You do not have permission to view these fields.");
+          showPopup("error", "Forbidden Access", `You do not have permission to access ${resource}.`);
           throw new Error("Forbidden access");
         } else {
           return response.text().then((text) => {
@@ -50,12 +65,12 @@ $(document).ready(function () {
         if (response.ok) {
           return response.json();
         } else if (response.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
+          showPopup("error", "Unauthorized Access", `Session expired. Please log in again to access ${resource}.`, () => {
             window.location.href = "/index.html";
-          }
+          });
           throw new Error("Unauthorized access");
         } else if (response.status === 403) {
-          alert("You do not have permission to view these crops.");
+          showPopup("error", "Forbidden Access", `You do not have permission to access ${resource}.`);
           throw new Error("Forbidden access");
         } else {
           return response.text().then((text) => {
@@ -84,18 +99,17 @@ $(document).ready(function () {
         if (response.ok) {
           return response.json();
         } else if (response.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
+          showPopup("error", "Unauthorized Access", `Session expired. Please log in again to access ${resource}.`, () => {
             window.location.href = "/index.html";
-          }
+          });
           throw new Error("Unauthorized access");
         } else if (response.status === 403) {
-          alert("You do not have permission to view these staff members.");
+          showPopup("error", "Forbidden Access", `You do not have permission to access ${resource}.`);
           throw new Error("Forbidden access");
         } else {
           return response.text().then((text) => {
             throw new Error(text || "An unexpected error occurred.");
-          });
-        }
+          });        }
       })
       .then((staff) => {
         staff.forEach((member) => {
@@ -118,12 +132,12 @@ $(document).ready(function () {
         if (response.ok) {
           return response.json();
         } else if (response.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
+          showPopup("error", "Unauthorized Access", `Session expired. Please log in again to access ${resource}.`, () => {
             window.location.href = "/index.html";
-          }
+          });
           throw new Error("Unauthorized access");
         } else if (response.status === 403) {
-          alert("You do not have permission to view monitoring logs.");
+          showPopup("error", "Forbidden Access", `You do not have permission to access ${resource}.`);
           throw new Error("Forbidden access");
         } else {
           return response.text().then((text) => {
