@@ -31,7 +31,7 @@
           </div>
           <div class="col-md-6">
             <label for="logDate" class="form-label">Log Date</label>
-            <input type="date" class="form-control" id="logDate" required />
+            <input type="date" class="form-control" id="logDate"/>
           </div>
         </div>
         <div class="row mb-3">
@@ -41,12 +41,11 @@
               class="form-control"
               id="observation"
               rows="3"
-              required
             ></textarea>
           </div>
           <div class="col-md-6">
             <label for="staff" class="form-label">Allocated Staff Member</label>
-            <select class="form-select" id="staff" required>
+            <select class="form-select" id="staff">
               <option value="" disabled selected>Select Saff Member</option>
             </select>
           </div>
@@ -54,13 +53,13 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="field" class="form-label">Allocated Field</label>
-            <select class="form-select" id="field" required>
+            <select class="form-select" id="field">
               <option value="" disabled selected>Select Feild</option>
             </select>
           </div>
           <div class="col-md-6">
             <label for="crop" class="form-label">Allocated Crop</label>
-            <select class="form-select" id="crop" required>
+            <select class="form-select" id="crop">
               <option value="" disabled selected>Select Crop</option>
             </select>
           </div>
@@ -127,5 +126,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="/assets/js/monitoringLog.js"></script>
     <script src="/assets/js/signup.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>
