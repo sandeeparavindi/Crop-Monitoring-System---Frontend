@@ -14,6 +14,10 @@
       href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
       rel="stylesheet"
     />
+    <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css"
+  />
     <link rel="stylesheet" href="/assets/css/loader.css" />
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
     <style>
@@ -53,7 +57,7 @@
       <h2 class="text-left mb-3" style="margin-top: 100px">
         Field Staff Assignment
       </h2>
-      <button type="button" class="btn btn-info" id="addAssignment">
+      <button type="button" class="btn btn-info" id="addAssignment" style="margin-bottom: 20px;">
         + Add Assignment
       </button>
 
@@ -94,7 +98,7 @@
             </div>
             <div class="text-center">
               <button type="submit" class="btn btn-success" id="saveAssignment">
-                Save
+                Assign
               </button>
               <button type="button" class="btn btn-secondary" id="closeModal">
                 Close
@@ -103,7 +107,7 @@
           </form>
         </div>
       </div>
-      <table class="table mt-4 table-hover table-striped align-middle">
+      <table class="table mt-4 table-hover table-striped align-middle" id="assignmentTable" class="display">
         <thead class="table-dark">
           <tr>
             <th>Field</th>
@@ -113,7 +117,7 @@
           </tr>
         </thead>
         <tbody id="assignmentTableBody"></tbody>
-      </table>
+      </table>      
       <div class="back-btn-container">
         <button class="btn btn-primary" id="backBtn">Back to Field</button>
       </div>
@@ -129,5 +133,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="/assets/js/fieldAssignStaff.js"></script>
     <script src="/assets/js/signup.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>

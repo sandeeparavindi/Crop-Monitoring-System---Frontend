@@ -1,3 +1,31 @@
+function showValidationError(title, text) {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
+$(document).ready(function () {
+  loadAssignments();
+});
+
 document.getElementById("addAssignment").addEventListener("click", () => {
     modal.style.display = "block";
     modalOverlay.style.display = "block";
@@ -5,11 +33,7 @@ document.getElementById("addAssignment").addEventListener("click", () => {
       .toISOString()
       .split("T")[0];
   });
-
-  $(document).ready(function () {
-    loadAssignments();
-  });
-    
+   
   document.getElementById("closeModal").addEventListener("click", () => {
     modal.style.display = "none";
     modalOverlay.style.display = "none";
@@ -119,7 +143,11 @@ document.getElementById("addAssignment").addEventListener("click", () => {
       !data.assignedRole ||
       !data.assignmentDate
     ) {
-      alert("Please fill in all fields before saving.");
+      showPopup(
+        "warnning",
+        "Not Complete",
+        "Please fill in all fields before saving."
+      );
       return;
     }
     $.ajax({
@@ -131,30 +159,44 @@ document.getElementById("addAssignment").addEventListener("click", () => {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       success: function (response) {
-        alert("Assignment saved successfully!");
+        Swal.fire(
+          "Assign Successfully!",
+          "Field Assign to staff successfully.",
+          "success"
+        );
   
         $("#staffAssignmentModal").hide();
         $("#modalOverlay").hide();
   
         $("#assignmentStaffForm")[0].reset();
-  
+        loadAssignments();
         loadFieldsToDropdown();
         loadStaffToDropdown();
       },
       error: function (xhr) {
-          if (xhr.status === 401) {
-            if (confirm("Session expired. Please log in again.")) {
+        if (xhr.status === 401) {
+          showPopup(
+            "warning",
+            "Session Expired",
+            "Your session has expired. Please log in again.",
+            () => {
               window.location.href = "/index.html";
             }
-          } else if (xhr.status === 403) {
-            alert("You do not have permission to perform this action.");
-          } else {
-            alert(
-              "Error add staff membet to field: " +
-                (xhr.responseText || "An unexpected error occurred.")
-            );
-          }
-        },
+          );
+        } else if (xhr.status === 403) {
+          showPopup(
+            "error",
+            "Permission Denied",
+            "You do not have permission to perform this action."
+          );
+        } else {
+          showPopup(
+            "error",
+            "Error",
+            xhr.responseText || "An unexpected error occurred."
+          );
+        }
+      },
     });
   });
 
@@ -183,16 +225,34 @@ document.getElementById("addAssignment").addEventListener("click", () => {
             </tr>
           `);
         });
+        if ($.fn.dataTable.isDataTable('#assignmentTable')) {
+          $('#assignmentTable').DataTable().clear().destroy();
+        }
+  
+        $('#assignmentTable').DataTable();
       },
       error: function (xhr) {
         if (xhr.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
-            window.location.href = "/index.html";
-          }
+          showPopup(
+            "warning",
+            "Session Expired",
+            "Your session has expired. Please log in again.",
+            () => {
+              window.location.href = "/index.html";
+            }
+          );
         } else if (xhr.status === 403) {
-          alert("You do not have permission to view assignments.");
+          showPopup(
+            "error",
+            "Permission Denied",
+            "You do not have permission to perform this action."
+          );
         } else {
-          console.error("Failed to load assignments:", xhr.responseText);
+          showPopup(
+            "error",
+            "Error",
+            xhr.responseText || "An unexpected error occurred."
+          );
         }
       },
     });
