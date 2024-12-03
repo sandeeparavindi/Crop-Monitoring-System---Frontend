@@ -33,6 +33,86 @@ function previewCropImage() {
   }
 }
 
+function isFirstLetterCapitalized(text) {
+  return /^[A-Z]/.test(text);
+}
+
+// Validation function
+function validateInputsWithPopup() {
+  const cropCommonNameInput = document.getElementById("cropCommonName");
+  const cropScientificNameInput = document.getElementById("cropScientificName");
+
+  const cropCommonName = cropCommonNameInput.value.trim();
+  const cropScientificName = cropScientificNameInput.value.trim();
+  if (!cropCommonName) {
+    showValidationError("Invalid Input", "Crop Common Name cannot be empty.");
+    return false;
+  }
+
+  if (!isFirstLetterCapitalized(cropCommonName)) {
+    showValidationError(
+      "Invalid Input",
+      "Crop Common Name must start with a capital letter."
+    );
+    return false;
+  }
+
+  if (cropCommonName.length < 3) {
+    showValidationError(
+      "Invalid Input",
+      "Crop Common Name must be at least 3 characters long."
+    );
+    return false;
+  }
+
+  if (!cropScientificName) {
+    showValidationError("Invalid Input", "Crop Scientific Name cannot be empty.");
+    return false;
+  }
+
+  if (cropScientificName.length < 3) {
+    showValidationError(
+      "Invalid Input",
+      "Crop Scientific Name must be at least 3 characters long."
+    );
+    return false;
+  }
+
+  if (!isFirstLetterCapitalized(cropScientificName)) {
+    showValidationError(
+      "Invalid Input",
+      "Crop Scientific Name must start with a capital letter."
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function showValidationError(title, text) {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 //load all fields for combo-box
 function loadFields() {
   fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields", {
@@ -55,7 +135,6 @@ function loadFields() {
     })
     .catch((error) => {
       console.error("Error loading fields:", error);
-      // alert("Failed to load fields.");
     });
 }
 // Save Crop
@@ -143,26 +222,8 @@ function searchCrop() {
       },
     }
   )
-    // .then((response) => response.json())
-    // .then((data) => {
-    //   if (data.length > 0) {
-    //     const crop = data[0];
-    //     document.getElementById("cropCode").value = crop.cropCode;
-    //     document.getElementById("cropCommonName").value = crop.cropCommonName;
-    //     document.getElementById("cropScientificName").value =
-    //       crop.cropScientificName;
-    //     document.getElementById("cropCategory").value = crop.category;
-    //     document.getElementById("cropSeason").value = crop.cropSeason;
-    //     const fieldSelect = document.getElementById("field");
-    //     for (let i = 0; i < fieldSelect.options.length; i++) {
-    //       if (fieldSelect.options[i].value === crop.fieldCode) {
-    //         fieldSelect.selectedIndex = i;
-    //         break;
-    //       }
-    //     }
      .then((response) => {
       if (response.status === 401) {
-        // Session expired, redirect to login page
         alert("Session expired. Please log in again.");
         window.location.href = "index.html";
         return Promise.reject("Session expired.");
