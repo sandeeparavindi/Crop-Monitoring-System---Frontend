@@ -36,19 +36,19 @@ function isFirstLetterCapitalized(text) {
   return /^[A-Z]/.test(text);
 }
 
-// Validation
+// Validation function
 function validateInputsWithPopup() {
   const fieldNameInput = document.getElementById("fieldName");
   const fieldLocationInput = document.getElementById("fieldLocation");
   const fieldSizeInput = document.getElementById("fieldSize");
-  const fieldImage1Input = document.getElementById("fieldImage1");
-  const fieldImage2Input = document.getElementById("fieldImage2");
+  // const fieldImage1Input = document.getElementById("fieldImage1");
+  // const fieldImage2Input = document.getElementById("fieldImage2");
 
   const fieldName = fieldNameInput.value.trim();
   const fieldLocation = fieldLocationInput.value.trim();
   const fieldSize = fieldSizeInput.value.trim();
-  const fieldImage1 = fieldImage1Input.value.trim();
-  const fieldImage2 = fieldImage2Input.value.trim();
+  // const fieldImage1 = fieldImage1Input.value.trim();
+  // const fieldImage2 = fieldImage2Input.value.trim();
 
   if (!fieldName) {
     showValidationError("Invalid Input", "Field Name cannot be empty.");
@@ -73,15 +73,15 @@ function validateInputsWithPopup() {
     return false;
   }
 
-  if (!fieldImage1) {
-    showValidationError("Invalid Input", "Field Image 1 cannot be empty.");
-    return false;
-  }
+  // if (!fieldImage1) {
+  //   showValidationError("Invalid Input", "Field Image 1 cannot be empty.");
+  //   return false;
+  // }
 
-  if (!fieldImage2) {
-    showValidationError("Invalid Input", "Field Image 2 cannot be empty.");
-    return false;
-  }
+  // if (!fieldImage2) {
+  //   showValidationError("Invalid Input", "Field Image 2 cannot be empty.");
+  //   return false;
+  // }
 
   if (!isFirstLetterCapitalized(fieldLocation)) {
     showValidationError(
@@ -100,6 +100,21 @@ function showValidationError(title, text) {
     title: title,
     text: text,
     footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
   });
 }
 
@@ -144,7 +159,7 @@ $("#clearBtn").click(function (e) {
   previewImage2.src = "";
   previewImage2.style.display = "none";
 
-  alert("Form cleared successfully!");
+  Swal.fire("Clear Successfully!", "Form Cleared!", "success");
 });
 
 //search
@@ -153,7 +168,7 @@ $(document).ready(function () {
     const fieldCode = $("#searchField").val();
 
     if (!fieldCode) {
-      alert("Please enter a Field Code to search.");
+      showPopup("Warning", "Can not search!", "Please Enter your Field Code!");
       return;
     }
 
@@ -184,19 +199,33 @@ $(document).ready(function () {
           previewImage2.style.display = "block";
         }
 
-        alert("Field found and loaded into the form");
+        Swal.fire(
+          "Field Found!",
+          "Field has been search successfully.",
+          "success"
+        );
       },
       error: function (xhr) {
         if (xhr.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
-            window.location.href = "/index.html";
-          }
+          showPopup(
+            "warning",
+            "Session Expired",
+            "Your session has expired. Please log in again.",
+            () => {
+              window.location.href = "/index.html";
+            }
+          );
         } else if (xhr.status === 403) {
-          alert("You do not have permission to perform this action.");
+          showPopup(
+            "error",
+            "Permission Denied",
+            "You do not have permission to perform this action."
+          );
         } else {
-          alert(
-            "Error saving field: " +
-              (xhr.responseText || "An unexpected error occurred.")
+          showPopup(
+            "error",
+            "Error",
+            xhr.responseText || "An unexpected error occurred."
           );
         }
       },
@@ -241,6 +270,7 @@ $(document).ready(function () {
     if (!validateInputsWithPopup()) {
       return;
     }
+
     let formData = new FormData(this);
     formData.append("fieldCode", $("#fieldCode").val());
     formData.append("fieldName", $("#fieldName").val());
@@ -270,17 +300,24 @@ $(document).ready(function () {
       },
       error: function (xhr) {
         if (xhr.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
-            window.location.href = "/index.html";
-          }
+          showPopup(
+            "warning",
+            "Session Expired",
+            "Your session has expired. Please log in again.",
+            () => {
+              window.location.href = "/index.html";
+            }
+          );
         } else if (xhr.status === 403) {
-          showValidationError(
+          showPopup(
+            "error",
             "Permission Denied",
             "You do not have permission to perform this action."
           );
         } else {
-          showValidationError(
-            "Error Saving Field",
+          showPopup(
+            "error",
+            "Error",
             xhr.responseText || "An unexpected error occurred."
           );
         }
@@ -303,42 +340,65 @@ $("#deleteBtn").click(function (e) {
   const fieldCode = $("#fieldCode").val();
 
   if (!fieldCode) {
-    alert("Please provide a Field Code to delete.");
-    return;
+    showPopup("error", "Invalid Input", "Field Code cannot be empty.");
+    return false;
   }
-
-  $.ajax({
-    url: `http://localhost:5050/cropMonitoring/api/v1/fields/${fieldCode}`,
-    type: "DELETE",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    success: function () {
-      alert("Field deleted successfully");
-      $("#fieldForm")[0].reset();
-      $("#previewImage1, #previewImage2").attr("src", "").hide();
-      setFieldCode();
-    },
-    error: function (xhr) {
-      if (xhr.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
-          window.location.href = "/index.html";
-        }
-      } else if (xhr.status === 403) {
-        alert("You do not have permission to perform this action.");
-      } else {
-        alert(
-          "Error delete field: " +
-            (xhr.responseText || "An unexpected error occurred.")
-        );
-      }
-    },
-  });
+  showPopup(
+    "warning",
+    "Confirm Delete",
+    "Are you sure you want to delete this field?",
+    () => {
+      $.ajax({
+        url: `http://localhost:5050/cropMonitoring/api/v1/fields/${fieldCode}`,
+        type: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        success: function () {
+          Swal.fire(
+            "Delete Successfully!",
+            "Field has been deleted successfully.",
+            "success"
+          );
+          $("#fieldForm")[0].reset();
+          $("#previewImage1, #previewImage2").attr("src", "").hide();
+          setFieldCode();
+        },
+        error: function (xhr) {
+          if (xhr.status === 401) {
+            showPopup(
+              "warning",
+              "Session Expired",
+              "Your session has expired. Please log in again.",
+              () => {
+                window.location.href = "/index.html";
+              }
+            );
+          } else if (xhr.status === 403) {
+            showPopup(
+              "error",
+              "Permission Denied",
+              "You do not have permission to perform this action."
+            );
+          } else {
+            showPopup(
+              "error",
+              "Error",
+              xhr.responseText || "An unexpected error occurred."
+            );
+          }
+        },
+      });
+    }
+  );
 });
 
 //update
 $("#updateBtn").click(function (e) {
   e.preventDefault();
+  if (!validateInputsWithPopup()) {
+    return;
+  }
   const formData = new FormData();
   formData.append("fieldCode", $("#fieldCode").val());
 
@@ -379,22 +439,36 @@ $("#updateBtn").click(function (e) {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     success: function () {
-      alert("Field updated successfully");
+      Swal.fire(
+        "Update Successfully!",
+        "Field has been updated successfully.",
+        "success"
+      );
       $("#fieldForm")[0].reset();
       $("#previewImage1, #previewImage2").attr("src", "").hide();
       setFieldCode();
     },
     error: function (xhr) {
       if (xhr.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
-          window.location.href = "/index.html";
-        }
+        showPopup(
+          "warning",
+          "Session Expired",
+          "Your session has expired. Please log in again.",
+          () => {
+            window.location.href = "/index.html";
+          }
+        );
       } else if (xhr.status === 403) {
-        alert("You do not have permission to perform this action.");
+        showPopup(
+          "error",
+          "Permission Denied",
+          "You do not have permission to perform this action."
+        );
       } else {
-        alert(
-          "Error updated field: " +
-            (xhr.responseText || "An unexpected error occurred.")
+        showPopup(
+          "error",
+          "Error",
+          xhr.responseText || "An unexpected error occurred."
         );
       }
     },
