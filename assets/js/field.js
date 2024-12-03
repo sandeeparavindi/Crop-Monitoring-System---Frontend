@@ -340,7 +340,7 @@ $("#deleteBtn").click(function (e) {
   const fieldCode = $("#fieldCode").val();
 
   if (!fieldCode) {
-    showPopup("error", "Invalid Input", "Field Code cannot be empty.");
+    showPopup("error", "Invalid Input", "Please select a Field to delete!");
     return false;
   }
   showPopup(
