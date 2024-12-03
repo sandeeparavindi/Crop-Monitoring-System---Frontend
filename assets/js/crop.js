@@ -360,7 +360,15 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
 
   const userRole = localStorage.getItem("role");
   if (userRole === "ADMINISTRATIVE") {
-    alert("Unauthorized access.");
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "You do not have permission to perform this action.",
+    });
+    return;
+  }
+
+  if (!validateInputsWithPopup()) {
     return;
   }
 
@@ -389,21 +397,43 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
   })
     .then((response) => {
       if (response.ok) {
-        alert("Crop updated successfully!");
+        Swal.fire({
+          icon: "success",
+          title: "Updated Successfully",
+          text: "The crop details have been updated.",
+        });
         clearForm();
       } else if (response.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
+        Swal.fire({
+          icon: "warning",
+          title: "Session Expired",
+          text: "Please log in again.",
+          confirmButtonText: "Log In",
+        }).then(() => {
           window.location.href = "/index.html";
-        }
+        });
         throw new Error("Unauthorized");
       } else if (response.status === 403) {
-        alert("You do not have permission to perform this action.");
+        Swal.fire({
+          icon: "error",
+          title: "Forbidden",
+          text: "You do not have permission to perform this action.",
+        });
         throw new Error("Forbidden");
       } else {
-        alert("Failed to update the crop.");
+        return response.text().then((text) => {
+          throw new Error(text || "An unexpected error occurred.");
+        });
       }
     })
-    .catch((error) => console.error("Error:", error));
+    .catch((error) => {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message,
+      });
+      console.error("Error:", error);
+    });
 });
 
 //get all click
@@ -420,6 +450,16 @@ $(document).ready(function () {
         window.location.href = "/pages/crop-list.html";
       },
       error: function (error) {
+        if (response.status === 401) {
+          Swal.fire({
+            icon: "warning",
+            title: "Session Expired",
+            text: "Please log in again.",
+            confirmButtonText: "Log In",
+          }).then(() => {
+            window.location.href = "/index.html";
+          });
+        }
         console.error("Error fetching crops: ", error);
       },
     });
