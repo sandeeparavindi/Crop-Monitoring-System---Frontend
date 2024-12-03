@@ -32,6 +32,97 @@ document.getElementById("fieldImage2").addEventListener("change", function () {
   previewImage(this, "previewImage2");
 });
 
+function isFirstLetterCapitalized(text) {
+  return /^[A-Z]/.test(text);
+}
+
+// Validation
+function validateInputsWithPopup() {
+  const fieldNameInput = document.getElementById("fieldName");
+  const fieldLocationInput = document.getElementById("fieldLocation");
+  const fieldSizeInput = document.getElementById("fieldSize");
+  const fieldImage1Input = document.getElementById("fieldImage1");
+  const fieldImage2Input = document.getElementById("fieldImage2");
+
+  const fieldName = fieldNameInput.value.trim();
+  const fieldLocation = fieldLocationInput.value.trim();
+  const fieldSize = fieldSizeInput.value.trim();
+  const fieldImage1 = fieldImage1Input.value.trim();
+  const fieldImage2 = fieldImage2Input.value.trim();
+
+  if (!fieldName) {
+    showValidationError("Invalid Input", "Field Name cannot be empty.");
+    return false;
+  }
+
+  if (!isFirstLetterCapitalized(fieldName)) {
+    showValidationError(
+      "Invalid Input",
+      "Field Name must start with a capital letter."
+    );
+    return false;
+  }
+
+  if (!fieldLocation) {
+    showValidationError("Invalid Input", "Field Location cannot be empty.");
+    return false;
+  }
+
+  if (!fieldSize) {
+    showValidationError("Invalid Input", "Field Size cannot be empty.");
+    return false;
+  }
+
+  if (!fieldImage1) {
+    showValidationError("Invalid Input", "Field Image 1 cannot be empty.");
+    return false;
+  }
+
+  if (!fieldImage2) {
+    showValidationError("Invalid Input", "Field Image 2 cannot be empty.");
+    return false;
+  }
+
+  if (!isFirstLetterCapitalized(fieldLocation)) {
+    showValidationError(
+      "Invalid Input",
+      "Field Location must start with a capital letter."
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function showValidationError(title, text) {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+// document.getElementById("fieldName").addEventListener("input", function () {
+//   if (!isFirstLetterCapitalized(this.value)) {
+//     showValidationError(
+//       "Invalid Input",
+//       "Field Name must start with a capital letter."
+//     );
+//     this.value = "";
+//   }
+// });
+
+// document.getElementById("fieldLocation").addEventListener("input", function () {
+//   if (!isFirstLetterCapitalized(this.value)) {
+//     showValidationError(
+//       "Invalid Input",
+//       "Field Location must start with a capital letter."
+//     );
+//     this.value = "";
+//   }
+// });
+
 //clear
 $("#clearBtn").click(function (e) {
   e.preventDefault();
@@ -147,7 +238,9 @@ $(document).ready(function () {
   // save
   $("#fieldForm").on("submit", function (e) {
     e.preventDefault();
-
+    if (!validateInputsWithPopup()) {
+      return;
+    }
     let formData = new FormData(this);
     formData.append("fieldCode", $("#fieldCode").val());
     formData.append("fieldName", $("#fieldName").val());
@@ -166,7 +259,11 @@ $(document).ready(function () {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       success: function (response) {
-        alert("Field saved successfully!");
+        Swal.fire(
+          "Save Successfully!",
+          "Field has been saved successfully.",
+          "success"
+        );
         $("#fieldForm")[0].reset();
         $("#previewImage1, #previewImage2").attr("src", "").hide();
         setFieldCode();
@@ -177,11 +274,14 @@ $(document).ready(function () {
             window.location.href = "/index.html";
           }
         } else if (xhr.status === 403) {
-          alert("You do not have permission to perform this action.");
+          showValidationError(
+            "Permission Denied",
+            "You do not have permission to perform this action."
+          );
         } else {
-          alert(
-            "Error saving field: " +
-              (xhr.responseText || "An unexpected error occurred.")
+          showValidationError(
+            "Error Saving Field",
+            xhr.responseText || "An unexpected error occurred."
           );
         }
       },
