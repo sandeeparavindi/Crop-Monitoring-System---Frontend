@@ -154,7 +154,7 @@ $(document).ready(function () {
     const fieldCode = $("#searchField").val();
 
     if (!fieldCode) {
-      showPopup("Warning", "Can not search!", "Please Enter your Field Code!");
+      showPopup("warning", "Can not search!", "Please Enter your Field Code!");
       return;
     }
 
@@ -165,6 +165,15 @@ $(document).ready(function () {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       success: function (response) {
+        // Check if response has valid data
+        if (!response || !response.fieldCode || !response.fieldName) {
+          showPopup(
+            "warning",
+            "Not Found!",
+            "No field found with the provided Field Code. Please try again."
+          );
+          return;
+        }
         $("#fieldCode").val(response.fieldCode);
         $("#fieldName").val(response.fieldName);
         $("#fieldLocation").val(response.fieldLocation);
@@ -184,7 +193,6 @@ $(document).ready(function () {
           previewImage2.src = "data:image/jpeg;base64," + response.fieldImage2;
           previewImage2.style.display = "block";
         }
-
         Swal.fire(
           "Field Found!",
           "Field has been search successfully.",

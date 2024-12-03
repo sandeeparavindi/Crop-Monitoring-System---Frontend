@@ -325,7 +325,7 @@ function searchStaff() {
       if (data && data.length > 0) {
         populateStaffForm(data[0]);
       } else {
-        showPopup("Warning", "Not Found!", "Please try again.!");
+        showPopup("warning", "Not Found!", "Please try again.!");
       }
     },
     error: function (xhr) {

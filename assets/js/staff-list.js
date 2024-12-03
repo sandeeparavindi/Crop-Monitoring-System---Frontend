@@ -135,20 +135,18 @@ $(document).ready(function () {
           <td>${staff.contactNo}</td>
           <td>${staff.email}</td>
           <td>
-            ${
-              staff.vehicleCode
-                ? `${staff.vehicleCode} - ${vehicleCategory}
-                    ${
-                      !isReturned
-                        ? `<button class="btn btn-sm btn-danger return-btn" 
-                            data-staff-id="${staff.id}" 
-                            data-vehicle-code="${staff.vehicleCode}">
-                            Return
-                          </button>`
-                        : ""
-                    }`
-                : "Not Allocated"
-            }
+            ${staff.vehicleCode ? `${staff.vehicleCode} - ${vehicleCategory}` : "Not Allocated"}
+      ${
+        staff.vehicleCode && !isReturned
+          ? `<div style="float: right;">
+               <button class="btn btn-sm btn-danger return-btn" 
+                 data-staff-id="${staff.id}" 
+                 data-vehicle-code="${staff.vehicleCode}">
+                 Return
+               </button>
+             </div>`
+          : ""
+      }
           </td>
         </tr>`;
       additionalDetailsTable.append(additionalRow);
@@ -191,7 +189,11 @@ $(document).ready(function () {
     })
       .then((response) => {
         if (response.status === 204) {
-          alert("Vehicle status updated to available.");
+          Swal.fire(
+            "Update Successfully!",
+            "Vehicle status updated to available.",
+            "success"
+          );
 
           sessionRemovedVehicles.add(staffId);
           saveRemovedVehiclesToLocalStorage();
@@ -204,27 +206,35 @@ $(document).ready(function () {
           const vehicleCell = button.closest("td");
           vehicleCell.html("Not Allocated");
         } else if (response.status === 404) {
-          alert("Staff or vehicle not found.");
+          showPopup(
+            "error",
+            "Not Found!.",
+            "Staff or vehicle not found."
+          );
         } else {
-          alert(`Unexpected error: ${response.status} ${response.statusText}`);
+          showPopup(
+            "error",
+            "Error",
+            `Unexpected error: ${response.status} ${response.statusText}`
+          );
         }
       })
       .catch((error) => {
         console.error("Error during API call:", error);
-        alert(
-          "Failed to update vehicle status. Check the console for details."
+        showPopup(
+          "error",
+          "Error",
+          "Failed to update vehicle status."
         );
       });
   }
-
-  $(".table").DataTable({
-    paging: true,
-    searching: true,
-    ordering: true,
-    responsive: true,
-  });
 
   fetchVehicles().then(() => {
     fetchAndDisplayStaff();
   });
 });
+
+$("#backBtn").click(function () {
+  window.location.href = "staff.html";
+});
+
