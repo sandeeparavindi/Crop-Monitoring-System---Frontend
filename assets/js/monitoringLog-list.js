@@ -169,13 +169,21 @@ $(document).ready(function () {
           </tr>
         `;
         });
-        $("#monitoringLogTable").html(rows);
+        $("#monitoringLogTable tbody").html(rows);
+        $("#monitoringLogTable").DataTable({
+          paging: true,
+          searching: true,
+          ordering: true,
+          responsive: true,
+          order: [[1, "asc"]], 
+        });
       })
       .catch((error) => {
         console.error("Error fetching monitoring logs:", error);
         alert(error.message);
       });
   }
+
 
   Promise.all([fetchFields(), fetchCrops(), fetchStaff()])
     .then(() => {
