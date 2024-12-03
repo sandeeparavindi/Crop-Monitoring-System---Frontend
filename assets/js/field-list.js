@@ -29,7 +29,7 @@ $(document).ready(function () {
           ? `<img src="data:image/jpeg;base64,${field.fieldImage2}" alt="Field Image 2" style="width: 50px; height: 50px; object-fit: cover;" />`
           : "No Image";
 
-        $("#cropDetailsTable").append(`
+        $("#cropDetailsTable tbody").append(`
             <tr>
               <th scope="row">${index + 1}</th>
               <td>${field.fieldCode}</td>
@@ -40,6 +40,7 @@ $(document).ready(function () {
             </tr>
           `);
       });
+      $("#cropDetailsTable").DataTable();
     },
     error: function (xhr) {
       if (xhr.status === 401) {
@@ -51,7 +52,7 @@ $(document).ready(function () {
             window.location.href = "/index.html";
           }
         );
-      }else {
+      } else {
         showPopup(
           "error",
           "Error",
