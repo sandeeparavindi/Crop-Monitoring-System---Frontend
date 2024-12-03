@@ -1,3 +1,18 @@
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 $(document).ready(function () {
   $.ajax({
     url: "http://localhost:5050/cropMonitoring/api/v1/fields/allFields",
@@ -28,13 +43,19 @@ $(document).ready(function () {
     },
     error: function (xhr) {
       if (xhr.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
-          window.location.href = "/index.html";
-        }
-      } else {
-        alert(
-          "Error get fields: " +
-            (xhr.responseText || "An unexpected error occurred.")
+        showPopup(
+          "warning",
+          "Session Expired",
+          "Your session has expired. Please log in again.",
+          () => {
+            window.location.href = "/index.html";
+          }
+        );
+      }else {
+        showPopup(
+          "error",
+          "Error",
+          xhr.responseText || "An unexpected error occurred."
         );
       }
     },
