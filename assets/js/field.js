@@ -41,14 +41,10 @@ function validateInputsWithPopup() {
   const fieldNameInput = document.getElementById("fieldName");
   const fieldLocationInput = document.getElementById("fieldLocation");
   const fieldSizeInput = document.getElementById("fieldSize");
-  // const fieldImage1Input = document.getElementById("fieldImage1");
-  // const fieldImage2Input = document.getElementById("fieldImage2");
 
   const fieldName = fieldNameInput.value.trim();
   const fieldLocation = fieldLocationInput.value.trim();
   const fieldSize = fieldSizeInput.value.trim();
-  // const fieldImage1 = fieldImage1Input.value.trim();
-  // const fieldImage2 = fieldImage2Input.value.trim();
 
   if (!fieldName) {
     showValidationError("Invalid Input", "Field Name cannot be empty.");
@@ -72,16 +68,6 @@ function validateInputsWithPopup() {
     showValidationError("Invalid Input", "Field Size cannot be empty.");
     return false;
   }
-
-  // if (!fieldImage1) {
-  //   showValidationError("Invalid Input", "Field Image 1 cannot be empty.");
-  //   return false;
-  // }
-
-  // if (!fieldImage2) {
-  //   showValidationError("Invalid Input", "Field Image 2 cannot be empty.");
-  //   return false;
-  // }
 
   if (!isFirstLetterCapitalized(fieldLocation)) {
     showValidationError(

@@ -1,8 +1,32 @@
+function showValidationError(title, text) {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 $(document).ready(function () {
   let vehicleMap = {};
   let sessionRemovedVehicles = new Set(
     JSON.parse(localStorage.getItem("removedVehicles") || "[]")
-  ); 
+  );
 
   function saveRemovedVehiclesToLocalStorage() {
     localStorage.setItem(
@@ -23,14 +47,13 @@ $(document).ready(function () {
       .then((response) => response.json())
       .then((vehicles) => {
         vehicleMap = {};
-        
+
         vehicles.forEach((vehicle) => {
           vehicleMap[vehicle.vehicleCode.trim()] = vehicle.vehicleCategory;
         });
       })
       .catch((error) => console.error("Error fetching vehicles:", error));
   }
-  
 
   function fetchAndDisplayStaff() {
     $.ajax({
@@ -40,17 +63,33 @@ $(document).ready(function () {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       success: function (data) {
+        if (!Array.isArray(data)) {
+          showValidationError("Staff Error", "Invalid staff data received.");
+          return;
+        }
         populateStaffTables(data);
       },
       error: function (xhr) {
         if (xhr.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
-            window.location.href = "/index.html";
-          }
+          showPopup(
+            "warning",
+            "Session Expired",
+            "Your session has expired. Please log in again.",
+            () => {
+              window.location.href = "/index.html";
+            }
+          );
+        } else if (xhr.status === 403) {
+          showPopup(
+            "error",
+            "Permission Denied",
+            "You do not have permission to perform this action."
+          );
         } else {
-          alert(
-            "Failed to load staff details: " +
-              (xhr.responseText || "An unexpected error occurred.")
+          showPopup(
+            "error",
+            "Error",
+            xhr.responseText || "An unexpected error occurred."
           );
         }
       },
@@ -60,17 +99,17 @@ $(document).ready(function () {
   function populateStaffTables(staffData) {
     const basicDetailsTable = $("#staffBasicDetailsTable");
     const additionalDetailsTable = $("#staffAdditionalDetailsTable");
-  
+
     basicDetailsTable.empty();
     additionalDetailsTable.empty();
-  
+
     staffData.forEach((staff, index) => {
       const vehicleCategory =
         vehicleMap[staff.vehicleCode?.trim()] || "Unknown Category";
-  
+
       const isVehicleRemoved = sessionRemovedVehicles.has(staff.id);
-      const isReturned = !staff.vehicleCode; 
-  
+      const isReturned = !staff.vehicleCode;
+
       const basicRow = `
         <tr>
           <td>${index + 1}</td>
@@ -84,7 +123,7 @@ $(document).ready(function () {
           <td>${staff.role}</td>
         </tr>`;
       basicDetailsTable.append(basicRow);
-  
+
       const additionalRow = `
         <tr>
           <td>${index + 1}</td>
@@ -114,34 +153,35 @@ $(document).ready(function () {
         </tr>`;
       additionalDetailsTable.append(additionalRow);
     });
-  
+
+
     $(".remove-btn").click(function () {
       const staffId = $(this).data("staff-id");
       returnVehicle(staffId);
-  
+
       const row = $(this).closest("tr");
       const vehicleCell = row.find("td").last();
       vehicleCell.html("Not Allocated");
-  
+
       sessionRemovedVehicles.add(staffId);
       saveRemovedVehiclesToLocalStorage();
     });
-  
+
     $(".return-btn").click(function () {
       const staffId = $(this).data("staff-id");
       const vehicleCode = $(this).data("vehicle-code");
-  
+
       returnVehicle(staffId);
-  
+
       const row = $(this).closest("tr");
       const vehicleCell = row.find("td").last();
       vehicleCell.html("Not Allocated");
     });
   }
-  
+
   function returnVehicle(staffId) {
     const url = `http://localhost:5050/cropMonitoring/api/v1/staff/${staffId}/return-vehicle`;
-  
+
     fetch(url, {
       method: "PATCH",
       headers: {
@@ -152,17 +192,17 @@ $(document).ready(function () {
       .then((response) => {
         if (response.status === 204) {
           alert("Vehicle status updated to available.");
-  
+
           sessionRemovedVehicles.add(staffId);
           saveRemovedVehiclesToLocalStorage();
-  
+
           fetchVehicles().then(() => {
-            fetchAndDisplayStaff();  
+            fetchAndDisplayStaff();
           });
-  
+
           const button = $(`button[data-staff-id="${staffId}"]`);
           const vehicleCell = button.closest("td");
-          vehicleCell.html("Not Allocated"); 
+          vehicleCell.html("Not Allocated");
         } else if (response.status === 404) {
           alert("Staff or vehicle not found.");
         } else {
@@ -171,15 +211,20 @@ $(document).ready(function () {
       })
       .catch((error) => {
         console.error("Error during API call:", error);
-        alert("Failed to update vehicle status. Check the console for details.");
+        alert(
+          "Failed to update vehicle status. Check the console for details."
+        );
       });
   }
-  
-  fetchVehicles().then(() => {
-    fetchAndDisplayStaff();
+
+  $(".table").DataTable({
+    paging: true,
+    searching: true,
+    ordering: true,
+    responsive: true,
   });
 
-  $("#backBtn").click(function () {
-    window.location.href = "staff.html";
+  fetchVehicles().then(() => {
+    fetchAndDisplayStaff();
   });
 });
