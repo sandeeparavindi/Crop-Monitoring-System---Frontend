@@ -66,7 +66,10 @@ function validateInputsWithPopup() {
   }
 
   if (!cropScientificName) {
-    showValidationError("Invalid Input", "Crop Scientific Name cannot be empty.");
+    showValidationError(
+      "Invalid Input",
+      "Crop Scientific Name cannot be empty."
+    );
     return false;
   }
 
@@ -143,7 +146,15 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
 
   const userRole = localStorage.getItem("role");
   if (userRole === "ADMINISTRATIVE") {
-    alert("Unauthorized access.");
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "You do not have permission to perform this action.",
+    });
+    return;
+  }
+
+  if (!validateInputsWithPopup()) {
     return;
   }
 
@@ -169,27 +180,48 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   })
-  .then((response) => {
-    if (response.ok) {
-      return response.text();
-    } else if (response.status === 401) {
-      if (confirm("Session expired. Please log in again.")) {
-        window.location.href = "/index.html";
+    .then((response) => {
+      if (response.ok) {
+        return response.text();
+      } else if (response.status === 401) {
+        Swal.fire({
+          icon: "warning",
+          title: "Session Expired",
+          text: "Please log in again.",
+          confirmButtonText: "Log In",
+        }).then(() => {
+          window.location.href = "/index.html";
+        });
+        throw new Error("Unauthorized");
+      } else if (response.status === 403) {
+        Swal.fire({
+          icon: "error",
+          title: "Forbidden",
+          text: "You do not have permission to perform this action.",
+        });
+        throw new Error("Forbidden");
+      } else {
+        return response.text().then((text) => {
+          throw new Error(text || "An unexpected error occurred.");
+        });
       }
-      throw new Error("Unauthorized");
-    } else if (response.status === 403) {
-      alert("You do not have permission to perform this action.");
-      throw new Error("Forbidden");
-    } else {
-      return response.text().then((text) => {
-        throw new Error(text || "An unexpected error occurred.");
+    })
+    .then((data) => {
+      Swal.fire({
+        icon: "success",
+        title: "Saved Successfully!",
+        text: "Crop Saved Successfully",
       });
-    }
-  })
-  .then((data) => {
-    alert(data);
-  })
-  .catch((error) => console.error("Error:", error));
+      clearForm();
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message,
+      });
+      console.error("Error:", error);
+    });
 });
 
 document.getElementById("clearBtn").addEventListener("click", clearForm);
@@ -216,13 +248,14 @@ function searchCrop() {
   const searchValue = document.getElementById("searchInput").value;
 
   fetch(
-    `http://localhost:5050/cropMonitoring/api/v1/crops?searchTerm=${searchValue}`, {
+    `http://localhost:5050/cropMonitoring/api/v1/crops?searchTerm=${searchValue}`,
+    {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     }
   )
-     .then((response) => {
+    .then((response) => {
       if (response.status === 401) {
         alert("Session expired. Please log in again.");
         window.location.href = "index.html";
@@ -235,10 +268,11 @@ function searchCrop() {
         const crop = data[0];
         document.getElementById("cropCode").value = crop.cropCode;
         document.getElementById("cropCommonName").value = crop.cropCommonName;
-        document.getElementById("cropScientificName").value = crop.cropScientificName;
+        document.getElementById("cropScientificName").value =
+          crop.cropScientificName;
         document.getElementById("cropCategory").value = crop.category;
         document.getElementById("cropSeason").value = crop.cropSeason;
-        
+
         const fieldSelect = document.getElementById("field");
         for (let i = 0; i < fieldSelect.options.length; i++) {
           if (fieldSelect.options[i].value === crop.fieldCode) {
@@ -290,8 +324,7 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
       } else if (response.status === 403) {
         alert("You do not have permission to perform this action.");
         throw new Error("Forbidden");
-      }
-      else {
+      } else {
         alert("Failed to delete the crop.");
       }
     })
@@ -335,8 +368,7 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
       if (response.ok) {
         alert("Crop updated successfully!");
         clearForm();
-      }
-      else if (response.status === 401) {
+      } else if (response.status === 401) {
         if (confirm("Session expired. Please log in again.")) {
           window.location.href = "/index.html";
         }
@@ -344,8 +376,7 @@ document.getElementById("updateBtn").addEventListener("click", function (e) {
       } else if (response.status === 403) {
         alert("You do not have permission to perform this action.");
         throw new Error("Forbidden");
-      }
-       else {
+      } else {
         alert("Failed to update the crop.");
       }
     })
