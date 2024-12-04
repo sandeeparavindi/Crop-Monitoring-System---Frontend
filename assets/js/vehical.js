@@ -24,6 +24,78 @@ function clearForm() {
   setVehicleCode();
 }
 
+function validateLicensePlate(licensePlate) {
+  const licensePlatePattern = /^[A-Z]{3}-\d{4}$/;
+  return licensePlatePattern.test(licensePlate);
+}
+
+function validateVehicleForm() {
+  const licensePlate = document.getElementById("licensePlate").value.trim();
+  const vehicleCategory = document.getElementById("vehicleCategory").value.trim();
+  const fuelType = document.getElementById("fuelType").value.trim();
+  const status = document.getElementById("status").value.trim();
+  const remarks = document.getElementById("remarks").value.trim();
+
+  if (!licensePlate) {
+    showValidationError("Invalid Input", "License Plate Number cannot be empty.");
+    return false;
+  }
+
+  if (!validateLicensePlate(licensePlate)) {
+    showValidationError(
+      "Invalid Input",
+      "License Plate Number must follow the format ABC-1234 (three capital letters followed by a hyphen and four digits)."
+    );
+    return false;
+  }
+
+  if (!vehicleCategory) {
+    showValidationError("Invalid Input", "Vehicle Category cannot be empty.");
+    return false;
+  }
+
+  if (!fuelType) {
+    showValidationError("Invalid Input", "Fuel Type cannot be empty.");
+    return false;
+  }
+
+  if (!status) {
+    showValidationError("Invalid Input", "Status cannot be empty.");
+    return false;
+  }
+
+  if (!remarks) {
+    showValidationError("Invalid Input", "Remarks cannot be empty.");
+    return false;
+  }
+
+  return true;
+}
+
+function showValidationError(title, text) {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 //save
 document.getElementById("saveBtn").addEventListener("click", function (e) {
   e.preventDefault();
