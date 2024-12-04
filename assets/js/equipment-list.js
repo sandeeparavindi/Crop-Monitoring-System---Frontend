@@ -55,7 +55,13 @@ $(document).ready(function () {
           `;
       });
 
-      $("#equipmentDetailsTable").html(tableRows);
+      $("#equipmentDetailsTable tbody").html(tableRows);
+      $("#equipmentDetailsTable").DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        responsive: true,
+      });
     }
   }
 
