@@ -15,6 +15,76 @@ window.onload = function () {
   loadStaffs();
 };
 
+function containsNumbers(text) {
+  return /\d/.test(text);
+}
+
+// validation function
+function validateEquipmentInputs() {
+  const equipmentName = $("#equipmentName").val().trim();
+  const equipmentType = $("#equipmentType").val().trim();
+  const equipmentStatus = $("#status").val().trim();
+
+  if (!equipmentName) {
+    showValidationError("Invalid Input", "Equipment Name cannot be empty.");
+    return false;
+  }
+
+  if (equipmentName.length < 3) {
+    showValidationError("Invalid Input", "Equipment Name must be at least 3 characters long.");
+    return false;
+  }
+
+  if (!/^[A-Z]/.test(equipmentName)) {
+    showValidationError(
+      "Invalid Input",
+      "Equipment Name must start with a capital letter."
+    );
+    return false;
+  }
+
+  if (containsNumbers(equipmentName)) {
+    showValidationError("Invalid Input", "Equipment Name cannot contain numbers.");
+    return false;
+  }
+
+  if (!equipmentType) {
+    showValidationError("Invalid Input", "Equipment Type cannot be empty.");
+    return false;
+  }
+
+  if (!equipmentStatus) {
+    showValidationError("Invalid Input", "Equipment Status cannot be empty.");
+    return false;
+  }
+
+  return true;
+}
+
+function showValidationError(title, text) {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 function loadFields() {
   fetch("http://localhost:5050/cropMonitoring/api/v1/fields/allFields", {
     headers: {
@@ -73,6 +143,10 @@ function loadStaffs() {
 document.getElementById("saveBtn").addEventListener("click", function (e) {
   e.preventDefault();
 
+  if (!validateEquipmentInputs()) {
+    return; 
+  }
+
   const equipmenteData = {
     equipmentId: document.getElementById("equipmentId").value,
     equipmentName: document.getElementById("equipmentName").value,
@@ -90,33 +164,53 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
     },
     body: JSON.stringify(equipmenteData),
   })
-    .then((response) => {
-      if (response.ok) {
-        return response.text();
-      } else if (response.status === 401) {
-        alert("Session expired. Please log in again.");
+  .then((response) => {
+    if (response.ok) {
+      return response.text();
+    } else if (response.status === 401) {
+      Swal.fire({
+        icon: "warning",
+        title: "Session Expired",
+        text: "Please log in again.",
+        confirmButtonText: "Log In",
+      }).then(() => {
         window.location.href = "/index.html";
-        return Promise.reject("Unauthorized: Session expired.");
-      } else if (response.status === 403) {
-        alert("You do not have permission to perform this action.");
-        return Promise.reject("Forbidden: Access denied.");
-      } else {
-        return Promise.reject("Failed to save equipment data.");
-      }
-    })
-    .then((data) => {
-      alert("Equipment saved successfully: " + data);
-      clearForm();
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      if (
-        error !== "Unauthorized: Session expired." &&
-        error !== "Forbidden: Access denied."
-      ) {
-        alert("Error: " + error);
-      }
+      });
+      throw new Error("Unauthorized");
+    } else if (response.status === 403) {
+      Swal.fire({
+        icon: "error",
+        title: "Forbidden",
+        text: "You do not have permission to perform this action.",
+      });
+      throw new Error("Forbidden");
+    } else {
+      return response.text().then((text) => {
+        throw new Error(text || "An unexpected error occurred.");
+      });
+    }
+  })
+  .then((data) => {
+    Swal.fire({
+      icon: "success",
+      title: "Save Successful",
+      text: "Equipment saved successfully!",
     });
+    clearForm();
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+    if (
+      error.message !== "Unauthorized" &&
+      error.message !== "Forbidden"
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Save Failed",
+        text: error.message || "An unexpected error occurred.",
+      });
+    }
+  });
 });
 
 // Search
