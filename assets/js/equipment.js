@@ -217,7 +217,7 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
 function searchEquipment() {
   const searchTerm = $("#searchEquipment").val().trim();
   if (!searchTerm) {
-    alert("Please enter an Equipment ID or Name to search.");
+    showValidationError("Invalid Input", "Please enter an Equipment ID or Name to search.");
     return;
   }
 
@@ -231,22 +231,33 @@ function searchEquipment() {
     success: function (data) {
       if (data && data.length > 0) {
         populateEquipmentForm(data[0]);
+        Swal.fire({
+          icon: "success",
+          title: "Search Successful",
+          text: "Equipment found and loaded.",
+        });
       } else {
-        alert("No equipment found with the provided ID or Name.");
+        showValidationError("No Results", "No equipment found with the provided ID or Name.");
       }
     },
     error: function (xhr) {
       if (xhr.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
+        Swal.fire({
+          icon: "warning",
+          title: "Session Expired",
+          text: "Please log in again.",
+          confirmButtonText: "Log In",
+        }).then(() => {
           window.location.href = "/index.html";
-        }
+        });
       } else if (xhr.status === 403) {
-        alert("You do not have permission to perform this action.");
+        showValidationError("Access Denied", "You do not have permission to perform this action.");
       } else {
-        alert(
-          "Error Search equipment: " +
-            (xhr.responseText || "An unexpected error occurred.")
-        );
+        Swal.fire({
+          icon: "error",
+          title: "Search Failed",
+          text: `Error: ${xhr.responseText || "An unexpected error occurred."}`,
+        });
       }
     },
   });
@@ -282,6 +293,12 @@ $("#updateBtn").on("click", function (event) {
   event.preventDefault();
 
   const equipmentId = $("#equipmentId").val();
+
+  if (!equipmentId) {
+    showValidationError("Invalid Input", "Equipment ID is missing.");
+    return;
+  }
+
   const equipmentData = {
     equipmentName: $("#equipmentName").val(),
     equipmentType: $("#equipmentType").val(),
@@ -299,25 +316,36 @@ $("#updateBtn").on("click", function (event) {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     success: function () {
-      alert("Equipment updated successfully.");
+      Swal.fire({
+        icon: "success",
+        title: "Update Successful",
+        text: "Equipment updated successfully.",
+      });
       clearForm();
     },
     error: function (xhr) {
       if (xhr.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
+        Swal.fire({
+          icon: "warning",
+          title: "Session Expired",
+          text: "Please log in again.",
+          confirmButtonText: "Log In",
+        }).then(() => {
           window.location.href = "/index.html";
-        }
+        });
       } else if (xhr.status === 403) {
-        alert("You do not have permission to perform this action.");
+        showValidationError("Access Denied", "You do not have permission to perform this action.");
       } else {
-        alert(
-          "Error update equipment: " +
-            (xhr.responseText || "An unexpected error occurred.")
-        );
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: `Error updating equipment: ${xhr.responseText || "An unexpected error occurred."}`,
+        });
       }
     },
   });
 });
+
 
 // Delete Equipment
 $("#deleteBtn").on("click", function (event) {
@@ -325,11 +353,19 @@ $("#deleteBtn").on("click", function (event) {
   const equipmentId = $("#equipmentId").val();
 
   if (!equipmentId) {
-    alert("Please select equipment to delete.");
+    showValidationError("Missing Input", "Please select equipment to delete.");
     return;
   }
 
-  if (confirm("Are you sure you want to delete this equipment?")) {
+  Swal.fire({
+    icon: "warning",
+    title: "Are you sure?",
+    text: "Do you really want to delete this equipment? This action cannot be undone.",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed) {
     $.ajax({
       url: `http://localhost:5050/cropMonitoring/api/v1/equipment/${equipmentId}`,
       method: "DELETE",
@@ -337,25 +373,36 @@ $("#deleteBtn").on("click", function (event) {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       success: function () {
-        alert("Equipment deleted successfully.");
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: "Equipment deleted successfully.",
+        });
         clearForm();
       },
       error: function (xhr) {
         if (xhr.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
+          Swal.fire({
+            icon: "warning",
+            title: "Session Expired",
+            text: "Please log in again.",
+            confirmButtonText: "Log In",
+          }).then(() => {
             window.location.href = "/index.html";
-          }
+          });
         } else if (xhr.status === 403) {
-          alert("You do not have permission to perform this action.");
+          showValidationError("Access Denied", "You do not have permission to perform this action.");
         } else {
-          alert(
-            "Error delete equipment: " +
-              (xhr.responseText || "An unexpected error occurred.")
-          );
+          Swal.fire({
+            icon: "error",
+            title: "Delete Failed",
+            text: `Error deleting equipment: ${xhr.responseText || "An unexpected error occurred."}`,
+          });
         }
       },
     });
   }
+});
 });
 
 //get all
@@ -369,20 +416,33 @@ $(document).ready(function () {
       },
       success: function (response) {
         sessionStorage.setItem("equipmentData", JSON.stringify(response));
-        window.location.href = "/pages/equipment-list.html";
+        Swal.fire({
+          icon: "success",
+          title: "Data Retrieved",
+          text: "All equipment details have been loaded successfully.",
+          confirmButtonText: "View List",
+        }).then(() => {
+          window.location.href = "/pages/equipment-list.html";
+        });
       },
       error: function (xhr) {
         if (xhr.status === 401) {
-          if (confirm("Session expired. Please log in again.")) {
+          Swal.fire({
+            icon: "warning",
+            title: "Session Expired",
+            text: "Please log in again.",
+            confirmButtonText: "Log In",
+          }).then(() => {
             window.location.href = "/index.html";
-          }
+          });
         } else if (xhr.status === 403) {
-          alert("You do not have permission to perform this action.");
+          showValidationError("Access Denied", "You do not have permission to perform this action.");
         } else {
-          alert(
-            "Error update equipment: " +
-              (xhr.responseText || "An unexpected error occurred.")
-          );
+          Swal.fire({
+            icon: "error",
+            title: "Failed to Load",
+            text: `Error fetching equipment: ${xhr.responseText || "An unexpected error occurred."}`,
+          });
         }
       },
     });

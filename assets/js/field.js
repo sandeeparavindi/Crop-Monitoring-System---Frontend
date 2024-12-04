@@ -469,16 +469,35 @@ $("#updateBtn").click(function (e) {
   });
 });
 
-//getall
 $(document).ready(function () {
   $("#getAllBtn").click(function () {
-    window.location.href = "field-list.html";
+    Swal.fire({
+      icon: "info",
+      title: "Navigate to Field List",
+      text: "Are you sure you want to view the list of fields?",
+      showCancelButton: true,
+      confirmButtonText: "Yes, go to List",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "field-list.html";
+      }
+    });
   });
-});
 
-$(document).ready(function () {
   $("#staffAssign").click(function () {
-    window.location.href = "fieldAssignStaff.html";
+    Swal.fire({
+      icon: "info",
+      title: "Navigate to Field Assignment",
+      text: "Are you sure you want to assign staff to fields?",
+      showCancelButton: true,
+      confirmButtonText: "Yes, assign staff",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "fieldAssignStaff.html";
+      }
+    });
   });
 });
 

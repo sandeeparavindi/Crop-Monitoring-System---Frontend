@@ -447,7 +447,14 @@ $(document).ready(function () {
       },
       success: function (crops) {
         localStorage.setItem("cropData", JSON.stringify(crops));
-        window.location.href = "/pages/crop-list.html";
+        Swal.fire({
+          icon: "success",
+          title: "Data Retrieved",
+          text: "All crop details have been loaded successfully.",
+          confirmButtonText: "View List",
+        }).then(() => {
+          window.location.href = "/pages/crop-list.html";
+        });
       },
       error: function (error) {
         if (response.status === 401) {

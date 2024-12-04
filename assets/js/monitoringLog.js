@@ -464,6 +464,18 @@ $("#deleteBtn").on("click", function () {
 //getall
 $(document).ready(function () {
   $("#getAllBtn").click(function () {
-    window.location.href = "monitoringLog-list.html";
+    Swal.fire({
+      icon: "info",
+      title: "Navigate to Monitoring Logs",
+      text: "Are you sure you want to view the monitoring logs?",
+      showCancelButton: true,
+      confirmButtonText: "Yes, view monitoring logs",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "monitoringLog-list.html";
+      }
+    });
   });
 });
+

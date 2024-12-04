@@ -171,7 +171,18 @@ window.onload = function () {
 //getall
 $(document).ready(function () {
   $("#getAllBtn").click(function () {
-    window.location.href = "staff-list.html";
+    Swal.fire({
+      icon: "info",
+      title: "Navigate to Staff List",
+      text: "Are you sure you want to view the staff list?",
+      showCancelButton: true,
+      confirmButtonText: "Yes, view staff list",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "staff-list.html";
+      }
+    });
   });
 });
 

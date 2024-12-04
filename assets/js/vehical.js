@@ -396,5 +396,17 @@ document.getElementById("deleteBtn").addEventListener("click", function (e) {
 
 //get all click
 document.getElementById("getAllBtn").addEventListener("click", function () {
-  window.location.href = "vehicle-list.html";
+  Swal.fire({
+    icon: "info",
+    title: "Navigate to Vehicle List",
+    text: "Are you sure you want to view the vehicle list?",
+    showCancelButton: true,
+    confirmButtonText: "Yes, view vehicle list",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "vehicle-list.html";
+    }
+  });
 });
+
