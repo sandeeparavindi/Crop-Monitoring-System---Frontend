@@ -41,7 +41,7 @@ document.addEventListener("click", function (e) {
       confirmButtonText: "Yes, sign out!",
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = "/logout";
+        window.location.href = "/index.html";
       }
     });
   }

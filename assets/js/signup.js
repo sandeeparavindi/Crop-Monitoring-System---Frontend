@@ -27,7 +27,6 @@ function showPopup(type, title, text, confirmCallback = null) {
     }
   });
 }
-
 // Sign In
 $("#signinForm").on("submit", function (e) {
   e.preventDefault();
@@ -73,32 +72,67 @@ $("#signinForm").on("submit", function (e) {
 $("#signupForm").on("submit", function (e) {
   e.preventDefault();
 
+  const email = $("#email").val().trim();
+  const password = $("#password").val().trim();
+  const role = $("#role").find("option:selected").val().toUpperCase();
+
+  if (!email) {
+    showValidationError("Missing Email", "Email field cannot be empty.");
+    return;
+  }
+
+  if (!password) {
+    showValidationError("Missing Password", "Password field cannot be empty.");
+    return;
+  }
+
+  if (!role) {
+    showValidationError("Missing Role", "Please select a role.");
+    return;
+  }
+
+  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
+  if (!emailRegex.test(email)) {
+    showValidationError("Invalid Email", "Please enter a valid email address.");
+    return;
+  }
+
+  if (password.length < 6) {
+    showValidationError("Weak Password", "Password must be at least 6 characters long.");
+    return;
+  }
+
   const signUpData = {
-    email: $("#email").val().trim(),
-    password: $("#password").val().trim(),
-    role: $("#role").find("option:selected").val().toUpperCase(),
+    email: email,
+    password: password,
+    role: role,
   };
 
-  console.log("Sign-Up Data:", signUpData);
-
   $.ajax({
-    url: "http://localhost:5050/cropMonitoring/api/v0/auth/signup",
+    url: signUpURI,
     method: "POST",
     data: JSON.stringify(signUpData),
     contentType: "application/json",
     success: function (response) {
       console.log("Sign-Up Successful:", response);
-      localStorage.setItem("token", response.token);
-
-      window.location.href = "/index.html";
+      showPopup(
+        "success",
+        "Sign-Up Successful",
+        "Your account has been created successfully.",
+        function () {
+          window.location.href = "/index.html"; 
+        }
+      );
     },
     error: function (xhr) {
-      console.error("Error:", xhr.responseText);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Sign-Up Failed!. Please try again.",
-      });
+      console.error("Sign-Up Error:", xhr.responseText);
+
+      let errorMessage = "Sign-Up Failed!, Email already exists!";
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage = xhr.responseJSON.message;
+      }
+
+      showValidationError("Error", errorMessage);
     },
   });
 });
