@@ -54,7 +54,7 @@ $("#signinForm").on("submit", function (e) {
 
       console.log("Role Stored:", userRole);
       console.log("Token Stored:", localStorage.getItem("token"));
-      window.location.href = "pages/sidebar.html";
+      window.location.href = "pages/dashborad.html";
     },
     error: function (xhr) {
       console.error("Sign-In Error:", xhr.responseText);
