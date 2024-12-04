@@ -26,3 +26,23 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }
     linkColor.forEach((l) => l.addEventListener("click", colorLink));
   });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const signOutLink = document.getElementById("signout-link");
+
+  signOutLink.addEventListener("click", function (event) {
+    event.preventDefault();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to sign out?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Sign out!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/index.html"; 
+      }
+    });
+  });
+});
