@@ -37,6 +37,10 @@ function isFirstLetterCapitalized(text) {
   return /^[A-Z]/.test(text);
 }
 
+function containsNumbers(text) {
+  return /\d/.test(text);
+}
+
 // Validation function
 function validateInputsWithPopup() {
   const cropCommonNameInput = document.getElementById("cropCommonName");
@@ -54,6 +58,11 @@ function validateInputsWithPopup() {
       "Invalid Input",
       "Crop Common Name must start with a capital letter."
     );
+    return false;
+  }
+
+  if (containsNumbers(cropCommonName)) {
+    showValidationError("Invalid Input", "Crop Comman Name cannot contain numbers.");
     return false;
   }
 

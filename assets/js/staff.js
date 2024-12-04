@@ -10,6 +10,10 @@ function isValidEmail(email) {
   return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 }
 
+function containsNumbers(text) {
+  return /\d/.test(text);
+}
+
 // Validation 
 function validateInputsWithPopup() {
   const firstNameInput = document.getElementById("firstName");
@@ -50,11 +54,21 @@ function validateInputsWithPopup() {
     return false;
   }
 
+  if (containsNumbers(firstName)) {
+    showValidationError("Invalid Input", "First Name cannot contain numbers.");
+    return false;
+  }
+
   if (!lastName || lastName.length < 3 || !isFirstLetterCapitalized(lastName)) {
     showValidationError(
       "Invalid Input",
       "Last Name must start with a capital letter and be at least 3 characters long."
     );
+    return false;
+  }
+
+  if (containsNumbers(lastName)) {
+    showValidationError("Invalid Input", "Last Name cannot contain numbers.");
     return false;
   }
 
@@ -76,6 +90,11 @@ function validateInputsWithPopup() {
 
   if (!designation) {
     showValidationError("Invalid Input", "Designation cannot be empty.");
+    return false;
+  }
+
+  if (containsNumbers(designation)) {
+    showValidationError("Invalid Input", "Designation cannot contain numbers.");
     return false;
   }
 

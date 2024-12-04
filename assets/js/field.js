@@ -36,6 +36,10 @@ function isFirstLetterCapitalized(text) {
   return /^[A-Z]/.test(text);
 }
 
+function containsNumbers(text) {
+  return /\d/.test(text);
+}
+
 // Validation function
 function validateInputsWithPopup() {
   const fieldNameInput = document.getElementById("fieldName");
@@ -56,6 +60,11 @@ function validateInputsWithPopup() {
       "Invalid Input",
       "Field Name must start with a capital letter."
     );
+    return false;
+  }
+
+  if (containsNumbers(fieldName)) {
+    showValidationError("Invalid Input", "field Name cannot contain numbers.");
     return false;
   }
 
