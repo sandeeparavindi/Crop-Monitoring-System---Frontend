@@ -100,6 +100,10 @@ function showPopup(type, title, text, confirmCallback = null) {
 document.getElementById("saveBtn").addEventListener("click", function (e) {
   e.preventDefault();
 
+  if (!validateVehicleForm()) {
+    return;
+  }
+
   const vehicleData = {
     vehicleCode: document.getElementById("vehicleCode").value,
     licensePlateNumber: document.getElementById("licensePlate").value,
@@ -120,12 +124,21 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
     if (response.ok) {
       return response.text();
     } else if (response.status === 401) {
-      if (confirm("Session expired. Please log in again.")) {
+      Swal.fire({
+        icon: "warning",
+        title: "Session Expired",
+        text: "Please log in again.",
+        confirmButtonText: "Log In",
+      }).then(() => {
         window.location.href = "/index.html";
-      }
+      });
       throw new Error("Unauthorized");
     } else if (response.status === 403) {
-      alert("You do not have permission to perform this action.");
+      Swal.fire({
+        icon: "error",
+        title: "Forbidden",
+        text: "You do not have permission to perform this action.",
+      });
       throw new Error("Forbidden");
     } else {
       return response.text().then((text) => {
@@ -134,7 +147,11 @@ document.getElementById("saveBtn").addEventListener("click", function (e) {
     }
   })
   .then((data) => {
-    alert(data);
+    Swal.fire({
+        icon: "success",
+        title: "Save Successfully!",
+        text: "Vehicle Saved Successfully!.",
+      });
   })
   .catch((error) => console.error("Error:", error));
 });
