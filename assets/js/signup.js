@@ -4,6 +4,30 @@ let refreshTokenURI =
   "http://localhost:5050/cropMonitoring/api/v0/auth/refresh";
 let token, refreshToken;
 
+function showValidationError(title, text) {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    footer: '<a href="">Why do I have this issue?</a>',
+  });
+}
+
+function showPopup(type, title, text, confirmCallback = null) {
+  Swal.fire({
+    icon: type,
+    title: title,
+    text: text,
+    showCancelButton: !!confirmCallback,
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then((result) => {
+    if (result.isConfirmed && confirmCallback) {
+      confirmCallback();
+    }
+  });
+}
+
 // Sign In
 $("#signinForm").on("submit", function (e) {
   e.preventDefault();
@@ -35,7 +59,12 @@ $("#signinForm").on("submit", function (e) {
     },
     error: function (xhr) {
       console.error("Sign-In Error:", xhr.responseText);
-      alert("Sign-In Failed: Invalid Email or Password");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Sign-In Failed: Invalid Email or Password",
+      });
+      return;
     },
   });
 });
@@ -65,7 +94,11 @@ $("#signupForm").on("submit", function (e) {
     },
     error: function (xhr) {
       console.error("Error:", xhr.responseText);
-      alert("Sign-Up Failed: " + xhr.responseText);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Sign-Up Failed!. Please try again.",
+      });
     },
   });
 });
