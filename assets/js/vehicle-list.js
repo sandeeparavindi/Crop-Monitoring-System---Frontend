@@ -7,7 +7,7 @@ $(document).ready(function () {
     },
     success: function (vehicles) {
       vehicles.forEach((vehicle, index) => {
-        $("#vehicleDetailsTable").append(`
+        $("#vehicleDetailsTable tbody").append(`
             <tr>
               <th scope="row">${index + 1}</th>
               <td>${vehicle.vehicleCode}</td>
@@ -19,16 +19,28 @@ $(document).ready(function () {
             </tr>
           `);
       });
+      $("#vehicleDetailsTable").DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        responsive: true,
+      });
     },
     error: function (xhr) {
       if (xhr.status === 401) {
-        if (confirm("Session expired. Please log in again.")) {
-          window.location.href = "/index.html";
-        }
+        showPopup(
+          "warning",
+          "Session Expired",
+          "Your session has expired. Please log in again.",
+          () => {
+            window.location.href = "/index.html";
+          }
+        );
       } else {
-        alert(
-          "Error get vehicles: " +
-            (xhr.responseText || "An unexpected error occurred.")
+        showPopup(
+          "error",
+          "Error",
+          xhr.responseText || "An unexpected error occurred."
         );
       }
     },
