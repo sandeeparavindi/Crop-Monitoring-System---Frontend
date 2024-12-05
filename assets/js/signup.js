@@ -91,7 +91,7 @@ $("#signupForm").on("submit", function (e) {
     return;
   }
 
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
+  const emailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/;
   if (!emailRegex.test(email)) {
     showValidationError("Invalid Email", "Please enter a valid email address.");
     return;

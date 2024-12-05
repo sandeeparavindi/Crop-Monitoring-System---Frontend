@@ -7,7 +7,7 @@ function isValidContactNumber(contactNo) {
 }
 
 function isValidEmail(email) {
-  return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+  return /^[A-Za-z0-9._%+-]+@gmail\.com$/.test(email);
 }
 
 function containsNumbers(text) {
