@@ -152,6 +152,23 @@ $(document).ready(function () {
       additionalDetailsTable.append(additionalRow);
     });
 
+    if ($.fn.DataTable.isDataTable("#basicDetailsTable")) {
+      $("#basicDetailsTable").DataTable().destroy();
+    }
+    $("#basicDetailsTable").DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+    });
+
+    if ($.fn.DataTable.isDataTable("#additionalDetailsTable")) {
+      $("#additionalDetailsTable").DataTable().destroy();
+    }
+    $("#additionalDetailsTable").DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+    });
 
     $(".remove-btn").click(function () {
       const staffId = $(this).data("staff-id");
